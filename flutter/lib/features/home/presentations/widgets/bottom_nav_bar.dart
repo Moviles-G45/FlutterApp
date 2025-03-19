@@ -1,5 +1,6 @@
+import 'package:finances/config/theme/colors.dart';
 import 'package:flutter/material.dart';
-import '/theme/colors.dart';
+
 
 class BottomNavBar extends StatelessWidget {
   @override

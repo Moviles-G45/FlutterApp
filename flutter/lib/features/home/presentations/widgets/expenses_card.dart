@@ -1,6 +1,6 @@
+import 'package:finances/config/theme/colors.dart';
+import 'package:finances/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
-import '/theme/colors.dart';
-import '/theme/text_styles.dart';
 
 class ExpensesCard extends StatelessWidget {
   @override
@@ -9,46 +9,63 @@ class ExpensesCard extends StatelessWidget {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.strongBlue,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
+          // 🔹 Savings on Goals (Con Progress Indicator)
+          Expanded(
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Icon(Icons.directions_car, color: AppColors.background, size: 40),
-                    SizedBox(height: 8),
-                    Text("Savings\nOn Goals", 
-                      textAlign: TextAlign.center, 
-                      style: AppTextStyles.subheading.copyWith(color: AppColors.background),
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator(
+                        value: 0.75, // 🔹 Simula progreso (75%)
+                        backgroundColor: Colors.white24,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.strongGreen),
+                        strokeWidth: 4,
+                      ),
                     ),
+                    Icon(Icons.directions_car, color: AppColors.background, size: 30),
                   ],
                 ),
-              ),
-              VerticalDivider(thickness: 1, color: Colors.grey[300]),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text("Revenue Last Week", style: AppTextStyles.subheading),
-                    Text("\$4,000.00", style: AppTextStyles.balanceText),
-                  ],
+                SizedBox(height: 8),
+                Text(
+                  "Savings\nOn Goals",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.subheading.copyWith(color: AppColors.textPrimary),
                 ),
-              ),
-              VerticalDivider(thickness: 1, color: Colors.grey[300]),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text("Food Last Week", style: AppTextStyles.subheading),
-                    Text("-\$100.00", 
-                      style: AppTextStyles.expenseText.copyWith(color: AppColors.strongGreen)),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
+          ),
+
+          // 🔹 Separador vertical
+          Container(
+            height: 60,
+            width: 1.5,
+            color: Colors.white54,
+          ),
+
+          // 🔹 Revenue y Food Expenses
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Revenue Last Week", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
+                Text("\$4,000.00", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
+                SizedBox(height: 8),
+                Divider(color: Colors.white54), // 🔹 Línea separadora horizontal
+                SizedBox(height: 9),
+                Text("Food Last Week", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
+                Text("-\$100.00", style: AppTextStyles.expenseText.copyWith(color: AppColors.strongGreen)),
+              ],
+            ),
           ),
         ],
       ),

@@ -8,4 +8,5 @@ class AppColors {
   static const Color textSecondary = Color(0xFFB7D9EE);
   static const Color mediumBlue = Color(0xFF6DB6FE);
   static const Color darkBlue = Color(0xFF0068FF);
+  static const Color strongBlue = Color.fromARGB(255, 6, 125, 195);
 }

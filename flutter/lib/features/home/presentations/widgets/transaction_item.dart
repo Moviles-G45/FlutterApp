@@ -1,6 +1,7 @@
+import 'package:finances/config/theme/colors.dart';
+import 'package:finances/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
-import '/theme/colors.dart';
-import '/theme/text_styles.dart';
+
 
 class TransactionItem extends StatelessWidget {
   final Map<String, dynamic> transaction;

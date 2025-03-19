@@ -1,4 +1,5 @@
-import 'package:finances/theme/app_theme.dart';
+import 'package:finances/config/theme/app_theme.dart';
+
 import 'package:flutter/material.dart';
 import 'features/home/screens/home.dart'; 
 void main() {
