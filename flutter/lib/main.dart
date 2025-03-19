@@ -1,4 +1,4 @@
-import 'package:finances/theme/app_theme.dart';
+import 'config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'features/home/screens/home.dart';
 import 'screens/launch_screen.dart';
