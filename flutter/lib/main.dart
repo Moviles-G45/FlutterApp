@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-/ Muestra la pantalla de agregar gastos
+// Muestra la pantalla de agregar gastos
 
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // Usa el tema si está configurado
