@@ -1,3 +1,4 @@
+import 'package:finances/presentation/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import '../widgets/expense_widgets.dart';
 
@@ -53,16 +54,7 @@ class TrackExpenseScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.swap_horiz), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.layers), label: ""),
-        ],
-        selectedItemColor: Colors.blue.shade700,
-        unselectedItemColor: Colors.grey,
-      ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }
