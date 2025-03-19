@@ -20,6 +20,7 @@ class _BalanceCardState extends State<BalanceCard> {
     super.initState();
     fetchBalance();
   }
+  //prueba
 
   Future<void> fetchBalance() async {
     try {
