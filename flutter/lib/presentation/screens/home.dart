@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:finances/presentation/widgets_home/expenses_card.dart';
 import 'package:finances/presentation/widgets_home/transaction_list.dart';
 import '../widgets/balance_card.dart';
-import '../widgets_home/bottom_nav_bar.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
