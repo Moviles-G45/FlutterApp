@@ -1,11 +1,28 @@
-import 'package:finances/config/theme/colors.dart';
-import 'package:flutter/material.dart';
+import 'package:finances/presentation/widgets/balance_card.dart';
+import 'package:finances/presentation/widgets/bottom_nav_bar.dart';
 import 'package:finances/presentation/widgets_home/expenses_card.dart';
+import 'package:finances/presentation/widgets_home/transaction_filter_bar.dart';
 import 'package:finances/presentation/widgets_home/transaction_list.dart';
-import '../widgets/balance_card.dart';
-import '../widgets/bottom_nav_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:finances/config/theme/colors.dart';
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  void _onFilterChanged(DateTime? start, DateTime? end) {
+    setState(() {
+      _startDate = start;
+      _endDate = end;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,8 +62,12 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     ExpensesCard(), // Tarjeta de gráficos e insights
-                    SizedBox(height: 20), // Espacio entre tarjetas
-                    TransactionList(), // Lista de transacciones
+                    SizedBox(height: 10),
+                    TransactionFilterBar(
+                      onDateSelected: _onFilterChanged,
+                    ),
+                    SizedBox(height: 10), // Espacio entre el filtro y la lista
+                    TransactionList(startDate: _startDate, endDate: _endDate),
                   ],
                 ),
               ),
