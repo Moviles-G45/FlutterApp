@@ -6,11 +6,10 @@ import 'presentation/screens/home.dart';
 import 'presentation/screens/launch_screen.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/signup_screen.dart';
-
-
+import 'presentation/screens/forgot_password_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();   // Usa Logger en lugar de print
+  WidgetsFlutterBinding.ensureInitialized(); // Usa Logger en lugar de print
   runApp(MyApp());
 }
 
@@ -26,6 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LaunchScreen(),
         '/login': (context) => LoginScreen(),
+        '/recover': (context) => ForgotPasswordScreen(),
         '/signup': (context) => SignupScreen(),
         '/home': (context) => HomeScreen(),
         '/tracking': (context) => TrackExpenseScreen(),
