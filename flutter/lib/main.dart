@@ -7,7 +7,12 @@ import 'presentation/screens/home.dart';
 // import 'presentation/screens/login_screen.dart';
 // import 'presentation/screens/signup_screen.dart';
 
-void main() => runApp(const MyApp());
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();   // Usa Logger en lugar de print
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

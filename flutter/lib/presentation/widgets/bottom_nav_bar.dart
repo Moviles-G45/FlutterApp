@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String? currentRoute = ModalRoute.of(context)?.settings.name;
+    
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.lowBarBlue, // Color de fondo
@@ -32,18 +35,24 @@ class BottomNavBar extends StatelessWidget {
           unselectedItemColor: Colors.white70,
           elevation: 0,
           onTap: (index) {
-            if (index == 0) {
-              Navigator.pushNamed(context, '/home');
-            } 
-            if (index == 2) { // El botón "Add"
-              Navigator.pushNamed(context, '/tracking');
+            Map<int, String> routes = {
+              0:'/home',
+              1:'/stats',
+              2:'/tracking',
+              3:'/map'
+            };
+            String? selectedRoute = routes[index];
+            
+            if (selectedRoute != null && selectedRoute != currentRoute) {
+              Navigator.pushNamed(context, selectedRoute);
             }
+
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Stats"),
             BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
-            BottomNavigationBarItem(icon: Icon(Icons.layers), label: "More"),
+            BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: "Map"),
           ],
         ),
       ),

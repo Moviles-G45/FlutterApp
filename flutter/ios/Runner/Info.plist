@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Esta aplicación necesita acceso a la ubicación para encontrar cajeros cercanos.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Esta aplicación necesita acceso a la ubicación en segundo plano.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Esta aplicación usa la ubicación para mostrar cajeros cercanos.</string>
+	<key>GMSApiKey</key>
+	<string>AIzaSyARgei34VyOKClGROzUwe4bIwQDgIrKvi4</string>	
+
 </dict>
 </plist>
