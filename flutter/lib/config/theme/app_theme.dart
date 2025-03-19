@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 const Color _customColor = Color(0xFFF1FFF3);
 
@@ -17,34 +17,18 @@ const List<Color> _colorThemes = [
   Color(0xFF0E3E3E),
 ];
 
-final List<TextTheme> _typographyThemes = [
-  TextTheme(
-    displayLarge: GoogleFonts.leagueSpartan(fontSize: 32, fontWeight: FontWeight.bold),
-    titleMedium: GoogleFonts.leagueSpartan(fontSize: 20, fontWeight: FontWeight.w500),
-    bodyMedium: GoogleFonts.leagueSpartan(fontSize: 16),
-  ),
-  TextTheme(
-    displayLarge: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.bold),
-    titleMedium: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w500),
-    bodyMedium: GoogleFonts.poppins(fontSize: 16),
-  ),
-];
 
 class AppTheme {
   final int selectedColor;
-  final int selectedTypography;
 
   AppTheme({
     this.selectedColor = 0,
-    this.selectedTypography = 0,
-  })  : assert(selectedColor >= 0 && selectedColor <= _colorThemes.length - 1),
-        assert(selectedTypography >= 0 && selectedTypography <= _typographyThemes.length - 1);
+  })  : assert(selectedColor >= 0 && selectedColor <= _colorThemes.length - 1);
 
   ThemeData theme() {
     return ThemeData(
       useMaterial3: true,
-      colorSchemeSeed: _colorThemes[selectedColor],
-      textTheme: _typographyThemes[selectedTypography],
+      colorSchemeSeed: _colorThemes[selectedColor]
     );
   }
 }
