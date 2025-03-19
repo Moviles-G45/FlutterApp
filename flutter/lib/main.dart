@@ -1,4 +1,5 @@
 import 'package:finances/config/theme/app_theme.dart';
+import 'package:finances/presentation/screens/map_screen.dart';
 import 'package:finances/presentation/screens/track_expense_screen.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/home.dart';
@@ -14,8 +15,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-// Muestra la pantalla de agregar gastos
-
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // Usa el tema si está configurado
       initialRoute: '/', // Pantalla inicial
@@ -25,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignupScreen(),
         '/home': (context) => HomeScreen(),
         '/tracking': (context) => TrackExpenseScreen(),
+        '/map': (context) => MapScreen(),
       },
     );
   }
