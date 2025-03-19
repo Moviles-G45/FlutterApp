@@ -1,4 +1,4 @@
-import 'package:finances/presentation/widgets/balance_card.dart';
+import 'package:finances/presentation/widgets_home/balance_card.dart';
 import 'package:finances/presentation/widgets/bottom_nav_bar.dart';
 import 'package:finances/presentation/widgets_home/expenses_card.dart';
 import 'package:finances/presentation/widgets_home/transaction_filter_bar.dart';
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10), // Espacio extra debajo del notch
+                SizedBox(height: 0), // Espacio extra debajo del notch
                 BalanceCard(), // Tarjeta de balance y gastos
                 SizedBox(height: 40), // Espacio para simular superposición
               ],

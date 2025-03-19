@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:finances/presentation/widgets_home/transaction_item.dart';
 import 'package:intl/intl.dart';
 
+
 class TransactionList extends StatelessWidget {
   final List<Map<String, dynamic>> transactions = [
     {

@@ -2,6 +2,7 @@ import 'package:finances/config/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
 class ExpenseLabel extends StatelessWidget {
   final String text;
   const ExpenseLabel({Key? key, required this.text}) : super(key: key);
