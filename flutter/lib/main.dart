@@ -1,9 +1,9 @@
 import 'package:finances/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'features/home/screens/home.dart';
-import 'login/screens/launch_screen.dart';
-import 'login/screens/login_screen.dart';
-import 'login/screens/signup_screen.dart';
+import 'presentation/screens/home.dart';
+import 'presentation/screens/launch_screen.dart';
+import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/signup_screen.dart';
 
 void main() => runApp(const MyApp());
 
