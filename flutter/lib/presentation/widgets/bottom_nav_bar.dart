@@ -7,7 +7,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.mediumBlue, // Color de fondo
+        color: AppColors.lowBarBlue, // Color de fondo
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(25), // Redondeo en las esquinas superiores
           topRight: Radius.circular(25),
@@ -31,10 +31,18 @@ class BottomNavBar extends StatelessWidget {
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white70,
           elevation: 0,
+          onTap: (index) {
+            if (index == 0) {
+              Navigator.pushNamed(context, '/home');
+            } 
+            if (index == 2) { // El botón "Add"
+              Navigator.pushNamed(context, '/tracking');
+            }
+          },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Stats"),
-            BottomNavigationBarItem(icon: Icon(Icons.swap_horiz), label: "Transfer"),
+            BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
             BottomNavigationBarItem(icon: Icon(Icons.layers), label: "More"),
           ],
         ),
