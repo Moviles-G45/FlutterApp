@@ -1,69 +1,86 @@
-import 'package:finances/config/theme/colors.dart';
-import 'package:finances/config/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class ExpensesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.strongBlue,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 🔹 Savings on Goals (Con Progress Indicator)
+          // 🟢 Gráfico circular de ahorro
           Expanded(
+            flex: 2,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator(
-                        value: 0.75, // 🔹 Simula progreso (75%)
-                        backgroundColor: Colors.white24,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.strongGreen),
-                        strokeWidth: 4,
-                      ),
-                    ),
-                    Icon(Icons.directions_car, color: AppColors.background, size: 30),
-                  ],
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    value: 0.7, // 70% completado
+                    backgroundColor: Colors.blue[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    strokeWidth: 6,
+                  ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   "Savings\nOn Goals",
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.subheading.copyWith(color: AppColors.textPrimary),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
 
-          // 🔹 Separador vertical
+          // 🟢 Línea de separación mejorada
           Container(
-            height: 60,
-            width: 1.5,
-            color: Colors.white54,
+            width: 3, // Aumentamos grosor
+            height: 80, // Ajustamos altura
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.5), // Mayor visibilidad
+              borderRadius: BorderRadius.circular(2), // Bordes redondeados
+            ),
           ),
 
-          // 🔹 Revenue y Food Expenses
+          // 🟢 Texto de ingresos y gastos
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Revenue Last Week", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
-                Text("\$4,000.00", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
-                SizedBox(height: 8),
-                Divider(color: Colors.white54), // 🔹 Línea separadora horizontal
-                SizedBox(height: 9),
-                Text("Food Last Week", style: AppTextStyles.subheading.copyWith(color: Colors.white)),
-                Text("-\$100.00", style: AppTextStyles.expenseText.copyWith(color: AppColors.strongGreen)),
+                Text(
+                  "Revenue Last Week",
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                Text(
+                  "\$4,000.00",
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4), // Espaciado entre líneas
+
+                // Línea divisoria mejorada
+                Container(
+                  height: 2,
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(vertical: 6),
+                  color: Colors.white.withOpacity(0.4),
+                ),
+
+                Text(
+                  "Food Last Week",
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                Text(
+                  "-\$100.00",
+                  style: TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
