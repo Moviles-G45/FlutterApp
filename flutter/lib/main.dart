@@ -2,9 +2,9 @@ import 'package:finances/config/theme/app_theme.dart';
 import 'package:finances/presentation/screens/track_expense_screen.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/home.dart';
-// import 'presentation/screens/launch_screen.dart';
-// import 'presentation/screens/login_screen.dart';
-// import 'presentation/screens/signup_screen.dart';
+import 'presentation/screens/launch_screen.dart';
+import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/signup_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -18,11 +18,11 @@ class MyApp extends StatelessWidget {
 
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // Usa el tema si está configurado
-      initialRoute: '/home', // Pantalla inicial
+      initialRoute: '/', // Pantalla inicial
       routes: {
-        // '/': (context) => LaunchScreen(),
-        // '/login': (context) => LoginScreen(),
-        // '/signup': (context) => SignupScreen(),
+        '/': (context) => LaunchScreen(),
+        '/login': (context) => LoginScreen(),
+        '/signup': (context) => SignupScreen(),
         '/home': (context) => HomeScreen(),
         '/tracking': (context) => TrackExpenseScreen(),
       },
