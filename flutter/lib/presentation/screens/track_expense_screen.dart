@@ -16,6 +16,10 @@ class TrackExpenseScreen extends StatefulWidget {
 }
 
 class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
+  final GlobalKey<ExpenseDatePickerState> datePickerKey = GlobalKey();
+  final GlobalKey<CategoriesInputFieldState> categoryPickerKey = GlobalKey();
+
+  
   DateTime? _selectedDate;
   int? _selectedCategoryId;
   final TextEditingController _amountController = TextEditingController();
@@ -59,6 +63,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      _resetFormFields();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Transacción guardada exitosamente")),
       );
@@ -73,6 +78,16 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
     );
   }
 }
+  void _resetFormFields() {
+      setState(() {
+        _amountController.clear();
+        _descriptionController.clear();
+      });
+
+      // Llamamos a las funciones de los widgets
+      datePickerKey.currentState?.resetDate();
+      categoryPickerKey.currentState?.resetCategory();
+    }
 
   @override
   void dispose() {
@@ -104,6 +119,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
+          
           color: AppColors.cardBackground,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(50),
@@ -118,23 +134,17 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
               const SizedBox(height: 30),
               const ExpenseLabel(text: "Date"),
               ExpenseDatePicker(
+                key: datePickerKey,
                 hintText: "Select a date",
-                onDateChanged: (date) {
-                  setState(() {
-                    _selectedDate = date;
-                  });
-                },
+                onDateChanged: (date) => _selectedDate = date,
               ),
               const SizedBox(height: 10),
               const ExpenseLabel(text: "Category"),
               CategoriesInputField(
+                key: categoryPickerKey,
                 placeholder: 'Select the category',
                 apiUrl: 'http://localhost:8000/categories',
-                onCategoryChanged: (categoryId) {
-                  setState(() {
-                    _selectedCategoryId = categoryId;
-                  });
-                },
+                onCategoryChanged: (categoryId) => _selectedCategoryId = categoryId,
               ),
               const SizedBox(height: 10),
               const ExpenseLabel(text: "Amount"),
@@ -148,6 +158,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
               ExpenseMessageBox(controller: _descriptionController),
               const SizedBox(height: 20),
               SaveExpenseButton(onPressed: _saveExpense),
+              const SizedBox(height: 150),
             ],
           ),
         ),

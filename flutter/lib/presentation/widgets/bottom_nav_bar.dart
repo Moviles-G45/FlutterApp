@@ -6,7 +6,18 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? currentRoute = ModalRoute.of(context)?.settings.name;
-    
+
+    Map<int, String> routes = {
+              0:'/home',
+              1:'/stats',
+              2:'/tracking',
+              3:'/map'
+    };
+
+    int currentIndex = routes.entries.firstWhere(
+      (entry) => entry.value == currentRoute,
+      orElse: () => MapEntry(0, '/home'), // Si no coincide, se usa 'Home'
+    ).key;
 
     return Container(
       decoration: BoxDecoration(
@@ -31,20 +42,15 @@ class BottomNavBar extends StatelessWidget {
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent, // Se hace transparente para que el `Container` controle el fondo
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white70,
+          selectedItemColor: AppColors.darkBlue,
+          unselectedItemColor: AppColors.cardBackground,
           elevation: 0,
+          currentIndex: currentIndex,
           onTap: (index) {
-            Map<int, String> routes = {
-              0:'/home',
-              1:'/stats',
-              2:'/tracking',
-              3:'/map'
-            };
             String? selectedRoute = routes[index];
             
             if (selectedRoute != null && selectedRoute != currentRoute) {
-              Navigator.pushNamed(context, selectedRoute);
+              Navigator.pushReplacementNamed(context, selectedRoute);
             }
 
           },

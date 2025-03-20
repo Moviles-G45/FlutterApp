@@ -21,14 +21,16 @@ class ExpenseLabel extends StatelessWidget {
 class ExpenseDatePicker extends StatefulWidget {
   final String hintText;
   final ValueChanged<DateTime?>? onDateChanged;
+  final Key? key;
 
-  const ExpenseDatePicker({Key? key, required this.hintText, this.onDateChanged}) : super(key: key);
+  ExpenseDatePicker({required this.hintText, this.onDateChanged, this.key}) : super(key: key);
 
   @override
-  _ExpenseDatePickerState createState() => _ExpenseDatePickerState();
+  ExpenseDatePickerState createState() => ExpenseDatePickerState();
 }
 
-class _ExpenseDatePickerState extends State<ExpenseDatePicker> {
+// 🔹 Quitamos el guion bajo para que sea pública
+class ExpenseDatePickerState extends State<ExpenseDatePicker> {
   DateTime? selectedDate;
 
   Future<void> _selectDate(BuildContext context) async {
@@ -57,6 +59,13 @@ class _ExpenseDatePickerState extends State<ExpenseDatePicker> {
     }
   }
 
+  // 🔹 Función para resetear la fecha
+  void resetDate() {
+    setState(() {
+      selectedDate = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -68,7 +77,7 @@ class _ExpenseDatePickerState extends State<ExpenseDatePicker> {
         fillColor: AppColors.mediumBlue,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
         suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today, color: Colors.grey.shade600),
+          icon: Icon(Icons.calendar_today),
           onPressed: () => _selectDate(context),
         ),
       ),
@@ -78,16 +87,23 @@ class _ExpenseDatePickerState extends State<ExpenseDatePicker> {
 
 class CategoriesInputField extends StatefulWidget {
   final String placeholder;
-  final String apiUrl; // URL del backend para obtener categorías
+  final String apiUrl;
   final ValueChanged<int?>? onCategoryChanged;
+  final Key? key;
 
-  const CategoriesInputField({Key? key, required this.placeholder, required this.apiUrl, this.onCategoryChanged}) : super(key: key);
+  CategoriesInputField({
+    required this.placeholder,
+    required this.apiUrl,
+    this.onCategoryChanged,
+    this.key,
+  }) : super(key: key);
 
   @override
-  _CategoriesInputFieldState createState() => _CategoriesInputFieldState();
+  CategoriesInputFieldState createState() => CategoriesInputFieldState();
 }
 
-class _CategoriesInputFieldState extends State<CategoriesInputField> {
+// 🔹 Ahora es pública
+class CategoriesInputFieldState extends State<CategoriesInputField> {
   List<Map<String, dynamic>> categories = [];
   Map<String, dynamic>? selectedCategory;
   bool isLoading = true;
@@ -104,26 +120,31 @@ class _CategoriesInputFieldState extends State<CategoriesInputField> {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          // Asumimos que cada categoría tiene 'id' y 'name'
           categories = data.map((category) => {
-            'id': category['id'],
-            'name': category['name'].toString()
-          }).toList();
+                'id': category['id'],
+                'name': category['name'].toString()
+              }).toList();
           isLoading = false;
         });
-      } else {
+      }else {
         throw Exception('Error al cargar categorías');
       }
     } catch (e) {
       setState(() => isLoading = false);
-      print('Error: $e');
     }
+  }
+
+  // 🔹 Función para resetear la categoría
+  void resetCategory() {
+    setState(() {
+      selectedCategory = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? const CircularProgressIndicator()
         : DropdownButtonFormField<Map<String, dynamic>>(
             value: selectedCategory,
             decoration: InputDecoration(
@@ -133,13 +154,14 @@ class _CategoriesInputFieldState extends State<CategoriesInputField> {
               fillColor: AppColors.mediumBlue,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
             ),
-            items: categories.map((Map<String, dynamic> category) {
+            items: categories.map((category) {
               return DropdownMenuItem<Map<String, dynamic>>(
                 value: category,
                 child: Text(category['name'], style: TextStyle(color: Colors.grey.shade800)),
+
               );
             }).toList(),
-            onChanged: (Map<String, dynamic>? newValue) {
+            onChanged: (newValue) {
               setState(() {
                 selectedCategory = newValue;
               });
