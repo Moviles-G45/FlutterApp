@@ -33,7 +33,7 @@ class LaunchScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             TextButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pushNamed(context, '/recover'),
               child: const Text(
                 "Forgot Password?",
                 style: TextStyle(color: Colors.black54),
