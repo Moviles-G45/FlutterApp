@@ -34,7 +34,7 @@ class AuthService {
         throw Exception("Error en login: ${response.body}");
       }
     } catch (e) {
-      throw Exception(e);
+      return null;
     }
   }
 
