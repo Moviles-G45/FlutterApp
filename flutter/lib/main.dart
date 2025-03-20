@@ -8,6 +8,7 @@ import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/signup_screen.dart';
 import 'presentation/screens/forgot_password_screen.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Usa Logger en lugar de print
   runApp(MyApp());
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme, // Usa el tema si está configurado
       initialRoute: '/', // Pantalla inicial
       routes: {
+
         '/': (context) => LaunchScreen(),
         '/login': (context) => LoginScreen(),
         '/recover': (context) => ForgotPasswordScreen(),
