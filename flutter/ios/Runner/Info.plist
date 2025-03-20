@@ -52,7 +52,13 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Esta aplicación usa la ubicación para mostrar cajeros cercanos.</string>
 	<key>GMSApiKey</key>
-	<string>AIzaSyARgei34VyOKClGROzUwe4bIwQDgIrKvi4</string>	
+	<string>AIzaSyARgei34VyOKClGROzUwe4bIwQDgIrKvi4</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
 
 </dict>
 </plist>

@@ -1,17 +1,28 @@
 import 'package:finances/config/theme/app_theme.dart';
 import 'package:finances/presentation/screens/map_screen.dart';
 import 'package:finances/presentation/screens/track_expense_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/home.dart';
 import 'presentation/screens/launch_screen.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/signup_screen.dart';
 import 'presentation/screens/forgot_password_screen.dart';
+import 'firebase_options.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Usa Logger en lugar de print
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("Firebase inicializado correctamente");
+  } catch (e) {
+    print("Error al inicializar Firebase: $e");
+  }
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
