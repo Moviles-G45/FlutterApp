@@ -62,7 +62,7 @@ class _MapScreenState extends State<MapScreen> {
     // Consultar cajeros cercanos y actualizar los marcadores
     try {
       List<dynamic> atmList =
-          await fetchNearbyATMs(_userLocation.latitude, _userLocation.longitude, 2);
+          await fetchNearbyATMs(_userLocation.latitude, _userLocation.longitude, 1);
       _updateAtmMarkers(atmList);
     } catch (e) {
       print(e);
