@@ -45,9 +45,19 @@ class AuthService {
     await prefs.remove("auth_token"); // 🔹 Eliminar token guardado
   }
 
-  // 🔹 Método para obtener el token almacenado
-  Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("auth_token");
+  Future<String> getIdToken([bool forceRefresh = false]) async {
+  final User? user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
+    try {
+      return await user.getIdToken(forceRefresh) ?? "";
+    } catch (e) {
+      print("Error obteniendo el token: $e");
+      return "";
+    }
   }
+  return "";
+}
+
+
 }
