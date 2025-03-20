@@ -14,7 +14,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   bool isLoading = false;
 
-  // 🔹 Método para recuperar la contraseña
   Future<void> handleForgotPassword() async {
     setState(() => isLoading = true);
 
@@ -27,7 +26,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
 
     try {
-      // 🔹 Hacer la solicitud al backend con el email en la URL
       final response = await http.post(
         Uri.parse("http://localhost:8000/auth/recover?email=$email"),
         headers: {"Content-Type": "application/json"},
@@ -87,8 +85,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 15),
-
-                  // 🔹 Campo de Email con Fondo Blanco y Bordes Redondeados
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
@@ -104,19 +100,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // 🔹 Botón "Send Link" con Loading
                   isLoading
                       ? const CircularProgressIndicator()
                       : CustomButton(
                           text: "Send Link",
                           onPressed: handleForgotPassword,
                         ),
-
                   const SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
