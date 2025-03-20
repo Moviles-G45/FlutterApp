@@ -1,19 +1,14 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart'; 
-import '../firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String backendUrl = "http://localhost:8000/auth/login";
+  final String backendUrl = "http://127.0.0.1:8000/auth/login";
 
   // 🔹 Método para iniciar sesión y guardar el token
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
 
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -39,7 +34,7 @@ class AuthService {
         throw Exception("Error en login: ${response.body}");
       }
     } catch (e) {
-      return null;
+      throw Exception(e);
     }
   }
 
