@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "undraw_mobile-analytics_bz2a.svg",
+      "filename" : "logo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "undraw_mobile-analytics_bz2a 1.svg",
+      "filename" : "logo 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "undraw_mobile-analytics_bz2a 2.svg",
+      "filename" : "logo 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

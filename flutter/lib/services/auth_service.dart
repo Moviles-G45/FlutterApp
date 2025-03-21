@@ -6,6 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final String backendUrl = "http://127.0.0.1:8000/auth/login";
 
+  // Get User Email
+
+
+
   // 🔹 Método para iniciar sesión y guardar el token
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
