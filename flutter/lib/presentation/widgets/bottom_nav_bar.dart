@@ -21,14 +21,14 @@ class BottomNavBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.lowBarBlue, // Color de fondo
+        color: AppColors.lowBarBlue, 
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25), // Redondeo en las esquinas superiores
+          topLeft: Radius.circular(25), 
           topRight: Radius.circular(25),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26, // Sombra sutil
+            color: Colors.black26, 
             blurRadius: 100,
             spreadRadius: 2,
           ),
@@ -41,7 +41,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent, // Se hace transparente para que el `Container` controle el fondo
+          backgroundColor: Colors.transparent, 
           selectedItemColor: AppColors.darkBlue,
           unselectedItemColor: AppColors.cardBackground,
           elevation: 0,

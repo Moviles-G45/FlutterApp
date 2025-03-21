@@ -84,7 +84,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
         _descriptionController.clear();
       });
 
-      // Llamamos a las funciones de los widgets
+
       datePickerKey.currentState?.resetDate();
       categoryPickerKey.currentState?.resetCategory();
     }
