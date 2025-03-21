@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = false);
 
     if (userData != null) {
-      showMessage("Login exitoso! Bienvenido ${userData['email']}");
+      showMessage("Login exitoso! Bienvenid@ ${userData['email']}");
       Navigator.pushNamed(context, '/home');
     } else {
       showMessage("Error en el login. Verifica tus credenciales.");
