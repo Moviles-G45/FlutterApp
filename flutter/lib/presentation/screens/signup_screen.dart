@@ -123,7 +123,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(height: 10),
                     _buildTextField("Mobile Number", phoneController),
                     const SizedBox(height: 10),
-                    _buildTextField("Date Of Birth", dobController),
+                    _buildTextField(
+                        "Date Of Birth (YYYY-MM-DD)", dobController),
                     const SizedBox(height: 10),
                     _buildTextField("Password", passwordController,
                         isPassword: true),

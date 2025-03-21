@@ -56,7 +56,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       backgroundColor: const Color(0xFF067DC3),
       body: Column(
         children: [
-          const SizedBox(height: 80),
+          const SizedBox(height: 60),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pushNamed(context, '/login'),
+            ),
+          ),
+          const SizedBox(height: 10),
           const Text(
             "Forgot Your Password?",
             style: TextStyle(
