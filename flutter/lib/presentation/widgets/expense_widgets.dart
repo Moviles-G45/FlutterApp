@@ -104,7 +104,7 @@ class CategoriesInputField extends StatefulWidget {
   CategoriesInputFieldState createState() => CategoriesInputFieldState();
 }
 
-// 🔹 Ahora es pública
+
 class CategoriesInputFieldState extends State<CategoriesInputField> {
   List<Map<String, dynamic>> categories = [];
   Map<String, dynamic>? selectedCategory;

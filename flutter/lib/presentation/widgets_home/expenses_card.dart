@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 double _parseToDouble(dynamic value) {
-  if (value is num) return value.toDouble(); // Si ya es num, convertir a double
+  if (value is num) return value.toDouble(); 
   if (value is String)
-    return double.tryParse(value) ?? 0.0; // Si es String, intenta convertir
-  return 0.0; // Si no es nada útil, devolver 0.0
+    return double.tryParse(value) ?? 0.0; 
+  return 0.0; 
 }
 
 
@@ -41,8 +41,8 @@ double savingsProgress = 0.0;
     if (idToken == null) throw Exception("Error de autenticación.");
 
     final DateTime now = DateTime.now();
-    final String balanceUrl = "http://localhost:8000/transactions/balance/${now.year}/${now.month}";
-    final String budgetUrl = "http://localhost:8000/budget/${now.month}/${now.year}";
+    final String balanceUrl = "https://fastapi-service-185169107324.us-central1.run.app/transactions/balance/${now.year}/${now.month}";
+    final String budgetUrl = "https://fastapi-service-185169107324.us-central1.run.app/budget/${now.month}/${now.year}";
 
     final responses = await Future.wait([
       http.get(Uri.parse(balanceUrl), headers: {
@@ -113,7 +113,7 @@ double savingsProgress = 0.0;
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 🟢 Gráfico circular de ahorro
+          
           Expanded(
             flex: 2,
             child: Column(
@@ -146,7 +146,7 @@ double savingsProgress = 0.0;
             ),
           ),
 
-          // 🟢 Línea de separación
+         
           Container(
             width: 3,
             height: 100,
@@ -157,7 +157,7 @@ double savingsProgress = 0.0;
             ),
           ),
 
-          // 🟢 Texto de Needs y Wants
+         
           Expanded(
             flex: 3,
             child: Column(

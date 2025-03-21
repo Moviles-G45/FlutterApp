@@ -72,7 +72,7 @@ class _MapScreenState extends State<MapScreen> {
   // Consultar cajeros cercanos en el backend
   Future<List<dynamic>> fetchNearbyATMs(double lat, double lon, double radius) async {
     final response = await http.get(Uri.parse(
-        'http://localhost:8000/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
+        'https://fastapi-service-185169107324.us-central1.run.app/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {

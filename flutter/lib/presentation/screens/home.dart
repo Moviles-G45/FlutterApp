@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 10), // Espacio entre el filtro y la lista
 
-                    // 🔹 Corregimos la asignación de fechas
+                    
                     TransactionList(
                       startDate: _startDate ?? DateTime(DateTime.now().year, DateTime.now().month, 1),
                       endDate: _endDate ?? DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
