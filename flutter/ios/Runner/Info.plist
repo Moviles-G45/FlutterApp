@@ -58,12 +58,25 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+<key>NSUserNotificationAlertStyle</key>
+<string>alert</string>
+<key>NSPushNotificationsUsageDescription</key>
+<string>Esta aplicación usará notificaciones para alertas de transacciones.</string>
+
 
 
 </dict>
 </plist>
-<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
+
