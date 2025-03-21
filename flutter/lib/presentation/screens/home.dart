@@ -6,7 +6,6 @@ import 'package:finances/presentation/widgets_home/transaction_list.dart';
 import 'package:flutter/material.dart';
 import 'package:finances/config/theme/colors.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -67,7 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onDateSelected: _onFilterChanged,
                     ),
                     SizedBox(height: 10), // Espacio entre el filtro y la lista
-                    TransactionList(startDate: _startDate, endDate: _endDate),
+
+                    // 🔹 Corregimos la asignación de fechas
+                    TransactionList(
+                      startDate: _startDate ?? DateTime(DateTime.now().year, DateTime.now().month, 1),
+                      endDate: _endDate ?? DateTime(DateTime.now().year, DateTime.now().month + 1, 0),
+                    ),
                   ],
                 ),
               ),

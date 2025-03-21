@@ -1,7 +1,7 @@
 import 'package:finances/config/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:finances/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -22,64 +22,50 @@ class _BalanceCardState extends State<BalanceCard> {
   }
 
   Future<void> fetchBalance() async {
-    setState(() {
-      isLoading = true;
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    final String? idToken = await AuthService().getIdToken();
+    if (idToken == null) throw Exception("Error de autenticación.");
+
+    final DateTime now = DateTime.now();
+    final String balanceUrl = "http://localhost:8000/transactions/balance/${now.year}/${now.month}";
+
+    final response = await http.get(Uri.parse(balanceUrl), headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $idToken",
     });
 
-    try {
-      // Obtener el token de autenticación
-      final String? idToken = await AuthService().getIdToken();
-      if (idToken == null) {
-        throw Exception("Error de autenticación. Inicia sesión nuevamente.");
-      }
+    if (response.statusCode == 200) {
+      final balanceData = jsonDecode(response.body);
 
-      // Obtener el usuario autenticado
-      final User? user = FirebaseAuth.instance.currentUser;
-      if (user == null || user.email == null) {
-        throw Exception("No se pudo obtener el usuario autenticado.");
-      }
-
-      // Definir URLs del backend
-      final String totalSpentUrl = "http://localhost:8000/total_spent?email=${user.email}";
-      final String balanceUrl = "http://localhost:8000/balance/2024/4?email=${user.email}";
-
-      // Hacer las solicitudes HTTP en paralelo
-      final responses = await Future.wait([
-        http.get(Uri.parse(totalSpentUrl), headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $idToken",
-        }),
-        http.get(Uri.parse(balanceUrl), headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $idToken",
-        }),
-      ]);
-
-      final totalSpentResponse = responses[0];
-      final balanceResponse = responses[1];
-
-      if (totalSpentResponse.statusCode == 200 && balanceResponse.statusCode == 200) {
-        final totalSpentData = jsonDecode(totalSpentResponse.body);
-        final balanceData = jsonDecode(balanceResponse.body);
-
-        setState(() {
-          totalExpense = totalSpentData["total_spent"] ?? 0.0;
-          totalBalance = balanceData["balance"] ?? 0.0;
-        });
-      } else {
-        throw Exception("Error en la respuesta del servidor.");
-      }
-    } catch (e) {
-      print("Error al obtener los datos: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al obtener los datos: $e")),
-      );
-    } finally {
       setState(() {
-        isLoading = false;
+        totalBalance = _parseToDouble(balanceData["balance"]);
+        totalExpense = _parseToDouble(balanceData["total_expenses"]);
       });
+    } else {
+      throw Exception("Error en la respuesta del servidor: ${response.body}");
     }
+  } catch (e) {
+    print("Error al obtener los datos: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error al obtener los datos: $e")),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
+double _parseToDouble(dynamic value) {
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? 0.0;
+  return 0.0;
+}
+
 
   @override
   Widget build(BuildContext context) {
