@@ -29,7 +29,7 @@ class ExpenseDatePicker extends StatefulWidget {
   ExpenseDatePickerState createState() => ExpenseDatePickerState();
 }
 
-// 🔹 Quitamos el guion bajo para que sea pública
+
 class ExpenseDatePickerState extends State<ExpenseDatePicker> {
   DateTime? selectedDate;
 
@@ -59,7 +59,7 @@ class ExpenseDatePickerState extends State<ExpenseDatePicker> {
     }
   }
 
-  // 🔹 Función para resetear la fecha
+  // Función para resetear la fecha
   void resetDate() {
     setState(() {
       selectedDate = null;
@@ -134,7 +134,7 @@ class CategoriesInputFieldState extends State<CategoriesInputField> {
     }
   }
 
-  // 🔹 Función para resetear la categoría
+  //Función para resetear la categoría
   void resetCategory() {
     setState(() {
       selectedCategory = null;

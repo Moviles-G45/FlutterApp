@@ -59,7 +59,7 @@ class _MapScreenState extends State<MapScreen> {
       CameraUpdate.newLatLng(_userLocation),
     );
 
-    // Consultar cajeros cercanos y actualizar los marcadores
+
     try {
       List<dynamic> atmList =
           await fetchNearbyATMs(_userLocation.latitude, _userLocation.longitude, 1);
