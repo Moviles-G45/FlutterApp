@@ -44,7 +44,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
     return;
   }
 
-  final url = Uri.parse("http://localhost:8000/transactions"); // URL del backend
+  final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/transactions"); // URL del backend
   final Map<String, dynamic> payload = {
     "date": DateFormat('yyyy-MM-dd').format(_selectedDate!),
     "amount": int.tryParse(_amountController.text) ?? 0,
@@ -143,7 +143,7 @@ class _TrackExpenseScreenState extends State<TrackExpenseScreen> {
               CategoriesInputField(
                 key: categoryPickerKey,
                 placeholder: 'Select the category',
-                apiUrl: 'http://localhost:8000/categories',
+                apiUrl: 'https://fastapi-service-185169107324.us-central1.run.app/categories',
                 onCategoryChanged: (categoryId) => _selectedCategoryId = categoryId,
               ),
               const SizedBox(height: 10),

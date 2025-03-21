@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finances/config/theme/app_theme.dart';
 import 'package:finances/presentation/screens/map_screen.dart';
 import 'package:finances/presentation/screens/track_expense_screen.dart';
-import 'package:finances/services/api_service.dart';
+// import 'package:finances/services/api_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/home.dart';
@@ -89,7 +89,7 @@ class SpendingReminderService {
   }
 
   Future<void> _sendEmailReminder() async {
-    final url = Uri.parse("http://localhost:8000/notifications/send-email");
+    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/notifications/send-email");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
