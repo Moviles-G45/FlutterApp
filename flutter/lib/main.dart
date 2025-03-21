@@ -88,7 +88,7 @@ class SpendingReminderService {
   }
 
   Future<void> _sendEmailReminder() async {
-    final url = Uri.parse("http://localhost:8000/notifications/send-email");
+    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/notifications/send-email");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
