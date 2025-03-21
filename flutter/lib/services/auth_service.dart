@@ -6,11 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final String backendUrl = "http://127.0.0.1:8000/auth/login";
 
-  // Get User Email
+  
 
 
 
-  // 🔹 Método para iniciar sesión y guardar el token
+
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
 
@@ -29,11 +29,11 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // 🔹 Guardar token en SharedPreferences
+        
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString("auth_token", idToken);
 
-        return data; // 🔹 Retorna los datos del usuario
+        return data; 
       } else {
         throw Exception("Error en login: ${response.body}");
       }
@@ -42,11 +42,11 @@ class AuthService {
     }
   }
 
-  // 🔹 Método para cerrar sesión y borrar el token
+  
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("auth_token"); // 🔹 Eliminar token guardado
+    await prefs.remove("auth_token"); 
   }
 
   Future<String> getIdToken([bool forceRefresh = false]) async {

@@ -67,7 +67,7 @@ Future<List<Map<String, dynamic>>> fetchTransactions({
         "time": _parseDate(tx["date"]),
         "category": category["name"] ?? "Unknown",
         "amount": _parseToDouble(tx["amount"]),
-        "isExpense": categoryTypeId != 1, // id 1 = earnings
+        "isExpense": categoryTypeId != 1,
       };
     }).toList();
   } else {
@@ -77,10 +77,10 @@ Future<List<Map<String, dynamic>>> fetchTransactions({
 
 
 double _parseToDouble(dynamic value) {
-  if (value is num) return value.toDouble(); // Si ya es num, convertir a double
+  if (value is num) return value.toDouble(); 
   if (value is String)
-    return double.tryParse(value) ?? 0.0; // Si es String, intenta convertir
-  return 0.0; // Si no es nada útil, devolver 0.0
+    return double.tryParse(value) ?? 0.0; 
+  return 0.0; 
 }
 
 String _parseDate(dynamic value) {
@@ -89,7 +89,7 @@ String _parseDate(dynamic value) {
       DateTime parsedDate = DateTime.parse(value);
       return DateFormat('yyyy-MM-dd').format(parsedDate);
     } catch (_) {
-      return value; // Si falla, devolver como String original
+      return value; 
     }
   }
   return value.toString();
