@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 double _parseToDouble(dynamic value) {
-  if (value is num) return value.toDouble(); // Si ya es num, convertir a double
+  if (value is num) return value.toDouble(); 
   if (value is String)
-    return double.tryParse(value) ?? 0.0; // Si es String, intenta convertir
-  return 0.0; // Si no es nada útil, devolver 0.0
+    return double.tryParse(value) ?? 0.0; 
+  return 0.0; 
 }
 
 
@@ -113,7 +113,7 @@ double savingsProgress = 0.0;
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 🟢 Gráfico circular de ahorro
+          
           Expanded(
             flex: 2,
             child: Column(
@@ -146,7 +146,7 @@ double savingsProgress = 0.0;
             ),
           ),
 
-          // 🟢 Línea de separación
+         
           Container(
             width: 3,
             height: 100,
@@ -157,7 +157,7 @@ double savingsProgress = 0.0;
             ),
           ),
 
-          // 🟢 Texto de Needs y Wants
+         
           Expanded(
             flex: 3,
             child: Column(
