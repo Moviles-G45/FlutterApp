@@ -57,7 +57,7 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
                 child: GestureDetector(
                   onTap: () => _selectDate(context, true),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                     decoration: BoxDecoration(
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.circular(10),
@@ -67,7 +67,7 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
                           ? "From: ${DateFormat('MMM dd, yyyy').format(_startDate!)}"
                           : "From",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
