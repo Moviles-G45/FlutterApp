@@ -41,8 +41,8 @@ double savingsProgress = 0.0;
     if (idToken == null) throw Exception("Error de autenticación.");
 
     final DateTime now = DateTime.now();
-    final String balanceUrl = "http://localhost:8000/transactions/balance/${now.year}/${now.month}";
-    final String budgetUrl = "http://localhost:8000/budget/${now.month}/${now.year}";
+    final String balanceUrl = "https://fastapi-service-185169107324.us-central1.run.app/transactions/balance/${now.year}/${now.month}";
+    final String budgetUrl = "https://fastapi-service-185169107324.us-central1.run.app/budget/${now.month}/${now.year}";
 
     final responses = await Future.wait([
       http.get(Uri.parse(balanceUrl), headers: {

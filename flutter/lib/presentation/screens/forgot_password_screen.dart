@@ -27,7 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://localhost:8000/auth/recover?email=$email"),
+        Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/auth/recover?email=$email"),
         headers: {"Content-Type": "application/json"},
       );
 

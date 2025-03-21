@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://127.0.0.1:8000"; 
+  static const String baseUrl = "https://fastapi-service-185169107324.us-central1.run.app"; 
 
   // Obtener el total gastado
   Future<Map<String, dynamic>> getTotalSpent(String userEmail) async {

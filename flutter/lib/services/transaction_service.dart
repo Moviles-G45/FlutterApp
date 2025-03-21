@@ -29,7 +29,7 @@ Future<List<Map<String, dynamic>>> fetchTransactions({
     throw Exception("Usuario no autenticado.");
   }
 
-  String url = "http://localhost:8000/transactions";
+  String url = "https://fastapi-service-185169107324.us-central1.run.app/transactions";
   List<String> queryParams = [];
 
   if (startDate != null) {
