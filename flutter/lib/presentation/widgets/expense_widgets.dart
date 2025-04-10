@@ -104,7 +104,6 @@ class CategoriesInputField extends StatefulWidget {
   CategoriesInputFieldState createState() => CategoriesInputFieldState();
 }
 
-
 class CategoriesInputFieldState extends State<CategoriesInputField> {
   List<Map<String, dynamic>> categories = [];
   Map<String, dynamic>? selectedCategory;
@@ -128,7 +127,7 @@ class CategoriesInputFieldState extends State<CategoriesInputField> {
               }).toList();
           isLoading = false;
         });
-      }else {
+      } else {
         throw Exception('Error al cargar categorías');
       }
     } catch (e) {
@@ -147,28 +146,30 @@ class CategoriesInputFieldState extends State<CategoriesInputField> {
   Widget build(BuildContext context) {
     return isLoading
         ? const CircularProgressIndicator()
-        : DropdownButtonFormField<Map<String, dynamic>>(
-            value: selectedCategory,
-            decoration: InputDecoration(
-              hintText: widget.placeholder,
-              hintStyle: TextStyle(color: Colors.grey.shade600),
-              filled: true,
-              fillColor: AppColors.mediumBlue,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+        : DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<Map<String, dynamic>>(
+              value: selectedCategory,
+              decoration: InputDecoration(
+                hintText: widget.placeholder,
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: AppColors.mediumBlue,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+              ),
+              menuMaxHeight: 200, 
+              items: categories.map((category) {
+                return DropdownMenuItem<Map<String, dynamic>>(
+                  value: category,
+                  child: Text(category['name'], style: TextStyle(color: Colors.grey.shade800)),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  selectedCategory = newValue;
+                });
+                widget.onCategoryChanged?.call(newValue?['id']);
+              },
             ),
-            items: categories.map((category) {
-              return DropdownMenuItem<Map<String, dynamic>>(
-                value: category,
-                child: Text(category['name'], style: TextStyle(color: Colors.grey.shade800)),
-
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                selectedCategory = newValue;
-              });
-              widget.onCategoryChanged?.call(newValue?['id']);
-            },
           );
   }
 }
