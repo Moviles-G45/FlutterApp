@@ -60,7 +60,7 @@ class _SignupScreenState extends State<SignupScreen> {
       };
 
       final response = await http.post(
-        Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/auth/signup"),
+        Uri.parse("http://localhost:8000/auth/signup"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(requestBody),
       );

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String backendUrl = "https://fastapi-service-185169107324.us-central1.run.app/auth/login";
+  final String backendUrl = "http://localhost:8000/auth/login";
 
   
 

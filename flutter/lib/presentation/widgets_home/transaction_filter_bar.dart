@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
+import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
 
 class TransactionFilterBar extends StatefulWidget {
-  final void Function(DateTime?, DateTime?) onDateSelected;
-
-  const TransactionFilterBar({
-    Key? key,
-    required this.onDateSelected,
-  }) : super(key: key);
+  const TransactionFilterBar({Key? key}) : super(key: key);
 
   @override
   _TransactionFilterBarState createState() => _TransactionFilterBarState();
@@ -19,9 +15,11 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
   DateTime? _endDate;
 
   Future<void> _selectDate(BuildContext context, bool isStart) async {
-    DateTime? picked = await showDatePicker(
+    DateTime initialDate = DateTime.now();
+
+    final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
@@ -38,11 +36,16 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
   }
 
   void _applyFilter() {
-    final DateTime now = DateTime.now();
-    widget.onDateSelected(
-      _startDate ?? DateTime(now.year, now.month, 1),
-      _endDate ?? DateTime(now.year, now.month + 1, 0),
-    );
+    final viewModel = Provider.of<TransactionViewModel>(context, listen: false);
+    final now = DateTime.now();
+
+    final start = _startDate ?? DateTime(now.year, now.month, 1);
+    final end = _endDate ?? DateTime(now.year, now.month + 1, 0);
+
+    print("Aplicando filtro de fechas:");
+    print("Desde: $start, Hasta: $end");
+
+    viewModel.setDateRange(start, end);
   }
 
   @override
@@ -57,7 +60,7 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
                 child: GestureDetector(
                   onTap: () => _selectDate(context, true),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                     decoration: BoxDecoration(
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.circular(10),
@@ -67,17 +70,17 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
                           ? "From: ${DateFormat('MMM dd, yyyy').format(_startDate!)}"
                           : "From",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: GestureDetector(
                   onTap: () => _selectDate(context, false),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                     decoration: BoxDecoration(
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.circular(10),
@@ -87,19 +90,19 @@ class _TransactionFilterBarState extends State<TransactionFilterBar> {
                           ? "To: ${DateFormat('MMM dd, yyyy').format(_endDate!)}"
                           : "To",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: _applyFilter,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                child: Text("Go", style: TextStyle(color: Colors.white)),
+                child: const Text("Go", style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
