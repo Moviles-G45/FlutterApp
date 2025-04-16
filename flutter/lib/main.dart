@@ -1,39 +1,28 @@
-import 'dart:async';
-import 'dart:convert';
-
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-
-import 'data/repositories/finances_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+
 import 'config/theme/app_theme.dart';
-import 'presentation/screens/home.dart';
+
+
 import 'presentation/screens/launch_screen.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/signup_screen.dart';
 import 'presentation/screens/forgot_password_screen.dart';
+import 'presentation/screens/home.dart';
 import 'presentation/screens/track_expense_screen.dart';
 import 'presentation/screens/map_screen.dart';
-import 'presentation/viewmodels/expenses_viewmodel.dart';
-import 'presentation/viewmodels/home_viewmodel.dart';
-import 'presentation/viewmodels/transaction_viewmodel.dart';
+import 'services/app_providers.dart';
+import 'services/spending_reminder_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
-    SpendingReminderService(
-      userEmail: user.email ?? '',
-    ).startMonitoring();
+    SpendingReminderService(userEmail: user.email ?? '').startMonitoring();
   }
 
   runApp(const MyApp());
@@ -44,13 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final financesRepository = FinancesRepository();
-    return MultiProvider(
-      providers: [
-       ChangeNotifierProvider(create: (_) => HomeViewModel(financesRepository)),
-    ChangeNotifierProvider(create: (_) => ExpensesViewModel(financesRepository)),
-    ChangeNotifierProvider(create: (_) => TransactionViewModel(financesRepository)),
-      ],
+    return AppProviders(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
@@ -66,43 +49,5 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class SpendingReminderService {
-  final String userEmail;
-
-  SpendingReminderService({required this.userEmail});
-
-  void startMonitoring() {
-    Timer.periodic(Duration(minutes: 10), (timer) async {
-      DateTime now = DateTime.now();
-      bool isWeekendNight =
-          (now.weekday == DateTime.friday || now.weekday == DateTime.saturday) &&
-              now.hour >= 20;
-
-      if (isWeekendNight) {
-        await _sendEmailReminder();
-      }
-    });
-  }
-
-  Future<void> _sendEmailReminder() async {
-    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/notifications/send-email");
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "to": userEmail,
-        "subject": "🧠 Weekend Spending Reminder",
-        "message": "It's weekend night! 🕗 Try to stay within your entertainment budget 🎯."
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      print("Email de recordatorio enviado correctamente");
-    } else {
-      print("Fallo al enviar el email: ${response.statusCode}");
-    }
   }
 }
