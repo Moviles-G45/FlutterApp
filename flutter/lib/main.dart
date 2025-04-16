@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'config/theme/app_theme.dart';
-
 
 import 'presentation/screens/create_budget_screen.dart';
 import 'presentation/screens/launch_screen.dart';
@@ -14,17 +13,49 @@ import 'presentation/screens/forgot_password_screen.dart';
 import 'presentation/screens/home.dart';
 import 'presentation/screens/track_expense_screen.dart';
 import 'presentation/screens/map_screen.dart';
+import 'presentation/viewmodels/location_notifier_viewmodel.dart';
 import 'services/app_providers.dart';
+import 'services/location_service.dart';
+import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    SpendingReminderService(userEmail: user.email ?? '').startMonitoring();
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  const iosInit = DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+
+  final initSettings = InitializationSettings(iOS: iosInit);
+
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(alert: true, badge: true, sound: true);
+
+  SpendingReminderService(notifications: flutterLocalNotificationsPlugin)
+      .startMonitoring();
+
+  final locationService = LocationService();
+  final notificationService =
+      NotificationService(flutterLocalNotificationsPlugin);
+
+  final locationNotifier = LocationNotifierViewModel(
+    locationService: locationService,
+    notificationService: notificationService,
+  );
+  locationNotifier.startMonitoring();
 
   runApp(const MyApp());
 }
