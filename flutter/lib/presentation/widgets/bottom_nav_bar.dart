@@ -10,7 +10,8 @@ class BottomNavBar extends StatelessWidget {
     Map<int, String> routes = {
               0:'/home',
               1:'/tracking',
-              2:'/map'
+              2:'/map',
+               3: '/budget',
     };
 
     int currentIndex = routes.entries.firstWhere(
@@ -57,6 +58,8 @@ class BottomNavBar extends StatelessWidget {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
             BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: "Map"),
+            BottomNavigationBarItem(icon: Icon(Icons.stacked_bar_chart), label: "Budget"),
+
           ],
         ),
       ),

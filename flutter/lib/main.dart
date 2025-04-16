@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'config/theme/app_theme.dart';
 
 
+import 'presentation/screens/create_budget_screen.dart';
 import 'presentation/screens/launch_screen.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/signup_screen.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => HomeScreen(),
           '/tracking': (context) => TrackExpenseScreen(),
           '/map': (context) => MapScreen(),
+          '/budget': (context) => const CreateBudgetScreen(),
         },
       ),
     );

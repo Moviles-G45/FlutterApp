@@ -79,4 +79,25 @@ Future<List<dynamic>> getTransactions(DateTime? start, DateTime? end) async {
       throw Exception("Error al obtener presupuesto");
     }
   }
+Future<void> postBudget({
+  required String token,
+  required Map<String, dynamic> body,
+}) async {
+  final url = Uri.parse('$baseUrl/budget/');
+
+  final response = await http.post(
+    url,
+    headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode(body),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception("Error al guardar presupuesto: ${response.body}");
+  }
+}
+
+
 }
