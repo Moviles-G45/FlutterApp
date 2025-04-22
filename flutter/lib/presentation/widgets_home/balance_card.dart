@@ -7,9 +7,7 @@ class BalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HomeViewModel>(context);
-    if (viewModel.isOffline) {
-  return Text("📴 You're offline. Showing last known data.", style: TextStyle(color: Colors.orange));
-}
+   
 
 
     return Container(

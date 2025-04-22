@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushNamed(context, '/home');
     } else {
       showMessage("Error en el login. Verifica tus credenciales.");
+      print(userData);
     }
   }
 

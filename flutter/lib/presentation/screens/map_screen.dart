@@ -24,7 +24,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _getUserLocation();
+   // _getUserLocation();
   }
 
   // Obtener la ubicación actual del usuario y cargar los cajeros cercanos
