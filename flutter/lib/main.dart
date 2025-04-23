@@ -13,11 +13,12 @@ import 'presentation/screens/forgot_password_screen.dart';
 import 'presentation/screens/home.dart';
 import 'presentation/screens/track_expense_screen.dart';
 import 'presentation/screens/map_screen.dart';
-import 'presentation/viewmodels/location_notifier_viewmodel.dart';
+
 import 'services/app_providers.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
+import 'presentation/viewmodels/location_notifier_viewmodel.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -25,10 +26,12 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Inicializa Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Configura notificaciones locales
   const iosInit = DarwinInitializationSettings(
     requestAlertPermission: true,
     requestBadgePermission: true,
@@ -40,16 +43,21 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(initSettings);
 
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
       ?.requestPermissions(alert: true, badge: true, sound: true);
 
-  SpendingReminderService(notifications: flutterLocalNotificationsPlugin)
-      .startMonitoring();
-
+  // Instancia servicios
+  final notificationService = NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
-  final notificationService =
-      NotificationService(flutterLocalNotificationsPlugin);
+
+  // Inicia recordatorios de gasto de fin de semana
+  final spendingReminderService = SpendingReminderService(
+    notificationService: notificationService,
+  );
+  spendingReminderService.startMonitoring();
+
+
+  // Inicia notificaciones basadas en ubicación
 
   final locationNotifier = LocationNotifierViewModel(
     locationService: locationService,
@@ -57,6 +65,7 @@ void main() async {
   );
   locationNotifier.startMonitoring();
 
+  // Corre la app
   runApp(const MyApp());
 }
 

@@ -6,10 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:finances/services/auth_service.dart';
 
 import '../data/models/app_notification.dart';
+import 'api_service.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notifications;
-  static const String baseUrl = 'http://localhost:8000'; // Cámbialo para dispositivo real
+  
 
   NotificationService(this.notifications);
 
@@ -33,7 +34,7 @@ class NotificationService {
   Future<void> saveNotification(AppNotification notification) async {
     try {
       final idToken = await AuthService().getIdToken();
-      final url = Uri.parse('$baseUrl/notifications');
+      final url = Uri.parse('${ApiService.baseUrl}/notifications');
 
       final response = await http.post(
         url,
