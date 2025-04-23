@@ -56,9 +56,8 @@ class AuthRepository {
 
   // Recover Password
   Future<RecoverResponse> recoverPassword(String email) async {
-    final url = Uri.parse(
-      'https://fastapi-service-185169107324.us-central1.run.app/auth/recover?email=$email',
-    );
+    final url = Uri.parse('$_baseUrl/recover?email=$email');
+
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -69,7 +68,7 @@ class AuthRepository {
       return RecoverResponse.fromMap(data);
     } else {
       throw Exception(
-          'An error happened while sending the recovery email: ${response.statusCode}');
+          'Error sending recovery email (${response.statusCode}): ${response.body}');
     }
   }
 

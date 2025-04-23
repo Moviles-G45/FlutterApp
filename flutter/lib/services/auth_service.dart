@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String backendUrl = "http://157.253.87.33:8000/auth/login";
+  final String backendUrl = "http://localhost:8000/auth/login";
 
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
@@ -31,7 +31,6 @@ class AuthService {
         return data;
       } else {
         throw Exception("Error en login: ${response.body}");
-        
       }
     } catch (e) {
       print("Error en el inicio de sesión: $e");

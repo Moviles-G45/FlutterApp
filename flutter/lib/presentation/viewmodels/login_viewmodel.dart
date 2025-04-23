@@ -11,7 +11,7 @@ class LoginViewModel extends ChangeNotifier {
 
   static const int _maxEmailLen = 50;
   static const int _maxPassLen = 20;
-  final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}\$');
+  final RegExp _emailRegex = RegExp(r'^[\w.-]+@([\w-]+\.)+[\w-]{2,6}$');
 
   LoginViewModel({AuthRepository? repository})
       : _repo = repository ?? AuthRepository();
