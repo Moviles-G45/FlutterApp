@@ -1,5 +1,5 @@
 import 'package:finances/config/theme/colors.dart';
-import 'package:finances/presentation/widgets/bottom_nav_bar.dart';
+import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';

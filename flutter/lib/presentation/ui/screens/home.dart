@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finances/config/theme/colors.dart';
 
-import '../viewmodels/expenses_viewmodel.dart';
-import '../viewmodels/home_viewmodel.dart';
-import '../viewmodels/transaction_viewmodel.dart';
+import '../../viewmodels/expenses_viewmodel.dart';
+import '../../viewmodels/home_viewmodel.dart';
+import '../../viewmodels/transaction_viewmodel.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets_home/balance_card.dart';
 import '../widgets_home/expenses_card.dart';
