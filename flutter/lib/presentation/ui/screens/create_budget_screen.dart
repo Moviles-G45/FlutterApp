@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finances/presentation/viewmodels/budget_viewmodel.dart';
 import 'package:finances/config/theme/colors.dart';
-import 'package:finances/presentation/widgets/bottom_nav_bar.dart';
+import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
 
 class CreateBudgetScreen extends StatelessWidget {
   const CreateBudgetScreen({super.key});

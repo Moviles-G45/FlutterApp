@@ -5,14 +5,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'config/theme/app_theme.dart';
 
-import 'presentation/screens/create_budget_screen.dart';
-import 'presentation/screens/launch_screen.dart';
-import 'presentation/screens/login_screen.dart';
-import 'presentation/screens/signup_screen.dart';
-import 'presentation/screens/forgot_password_screen.dart';
-import 'presentation/screens/home.dart';
-import 'presentation/screens/track_expense_screen.dart';
-import 'presentation/screens/map_screen.dart';
+import 'presentation/ui/screens/create_budget_screen.dart';
+import 'presentation/ui/screens/launch_screen.dart';
+import 'presentation/ui/screens/login_screen.dart';
+import 'presentation/ui/screens/signup_screen.dart';
+import 'presentation/ui/screens/forgot_password_screen.dart';
+import 'presentation/ui/screens/home.dart';
+import 'presentation/ui/screens/track_expense_screen.dart';
+import 'presentation/ui/screens/map_screen.dart';
 import 'presentation/viewmodels/location_notifier_viewmodel.dart';
 import 'services/app_providers.dart';
 import 'services/location_service.dart';
