@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/forgot_password_viewmodel.dart';
+import '/presentation/viewmodels/forgot_password_viewmodel.dart';
 import '../widgets/custom_button.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {

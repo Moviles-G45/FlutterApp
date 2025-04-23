@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_button.dart';
 import 'package:finances/config/theme/colors.dart';
-import '../viewmodels/launch_viewmodel.dart';
+import '/presentation/viewmodels/launch_viewmodel.dart';
 
 class LaunchScreen extends StatelessWidget {
   const LaunchScreen({super.key});

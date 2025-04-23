@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '/presentation/viewmodels/login_viewmodel.dart';
 import '../widgets/custom_button.dart';
 
 class LoginScreen extends StatelessWidget {
