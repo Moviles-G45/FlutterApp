@@ -98,8 +98,10 @@ class SignupViewModel extends ChangeNotifier {
       );
       _showMessage(context, 'Sign up successful: ${resp.message}');
       Navigator.pushNamed(context, '/login');
-    } catch (e) {
-      _showMessage(context, 'An error occurred: ${e.toString()}');
+    } catch (e, stack) {
+      debugPrint('Signup error: $e');
+      debugPrint('$stack');
+      _showMessage(context, 'Signup failed. Please try again.');
     } finally {
       isLoading = false;
       notifyListeners();

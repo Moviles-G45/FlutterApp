@@ -55,8 +55,10 @@ class LoginViewModel extends ChangeNotifier {
       } else {
         _showMessage(context, 'Login failed. Please check your credentials.');
       }
-    } catch (e) {
-      _showMessage(context, 'An error occurred: \$e');
+    } catch (e, stack) {
+      debugPrint('Signup error: $e');
+      debugPrint('$stack');
+      _showMessage(context, 'Log in failed. Please try again.');
     } finally {
       isLoading = false;
       notifyListeners();
