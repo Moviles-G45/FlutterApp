@@ -16,6 +16,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
   }
 
   void setCategory(int? id) {
+    
     selectedCategoryId = id;
     notifyListeners();
   }
