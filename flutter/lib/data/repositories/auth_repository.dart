@@ -1,28 +1,56 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:http/http.dart' as http;
-import '/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../models/signup_response.dart';
 import '../models/recover_response.dart';
 
 class AuthRepository {
-  final AuthService _authService;
+  final fb.FirebaseAuth _firebaseAuth;
   final String _baseUrl;
 
-  AuthRepository({AuthService? authService, String? baseUrl})
-      : _authService = authService ?? AuthService(),
+  AuthRepository({
+    fb.FirebaseAuth? firebaseAuth,
+    String? baseUrl,
+  })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
         _baseUrl = baseUrl ?? 'http://localhost:8000/auth';
 
-  // Sign In
+  /// Sign in with Firebase, exchange token with backend, cache token, and return User.
   Future<User?> signIn(String email, String password) async {
-    final data = await _authService.signIn(email, password);
-    if (data != null && data.containsKey('email')) {
+    try {
+      // 1. Firebase sign-in
+      final cred = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final idToken = await cred.user?.getIdToken();
+      if (idToken == null) throw Exception('Unable to obtain idToken');
+
+      // 2. Send token to backend
+      final resp = await http.post(
+        Uri.parse('$_baseUrl/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': idToken}),
+      );
+
+      if (resp.statusCode != 200) {
+        throw Exception('Login failed: ${resp.statusCode}');
+      }
+
+      // 3. Parse response and cache token
+      final data = jsonDecode(resp.body) as Map<String, dynamic>;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', idToken);
+
       return User.fromMap(data);
+    } catch (_) {
+      // swallow errors, return null to indicate failure
+      return null;
     }
-    return null;
   }
 
-  // Sign Up
+  /// Sign up on backend.
   Future<SignupResponse> signUp({
     required String fullName,
     required String email,
@@ -39,46 +67,50 @@ class AuthRepository {
       'phone_number': phoneNumber,
     });
 
-    final response = await http.post(
+    final resp = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: body,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      return SignupResponse.fromMap(data);
-    } else {
-      throw Exception(
-          'An error occurred in the process: ${response.statusCode}');
+    if (resp.statusCode != 200) {
+      throw Exception('Signup failed: ${resp.statusCode}');
     }
+    return SignupResponse.fromMap(jsonDecode(resp.body));
   }
 
-  // Recover Password
+  /// Request password recovery; email passed as query parameter.
   Future<RecoverResponse> recoverPassword(String email) async {
     final url = Uri.parse('$_baseUrl/recover?email=$email');
-
-    final response = await http.post(
+    final resp = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      return RecoverResponse.fromMap(data);
-    } else {
-      throw Exception(
-          'Error sending recovery email (${response.statusCode}): ${response.body}');
+    if (resp.statusCode != 200) {
+      throw Exception('Recover failed: ${resp.body}');
     }
+    return RecoverResponse.fromMap(jsonDecode(resp.body));
   }
 
-  // Sign Out
+  /// Sign out from Firebase and clear cached token.
   Future<void> signOut() async {
-    await _authService.signOut();
+    await _firebaseAuth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
   }
 
-  // Get ID Token
-  Future<String> getIdToken({bool forceRefresh = false}) {
-    return _authService.getIdToken(forceRefresh);
+  /// Get current Firebase ID token.
+  Future<String> getIdToken({bool forceRefresh = false}) async {
+    final fb.User? user = _firebaseAuth.currentUser;
+    if (user != null) {
+      try {
+        final String? token = await user.getIdToken(forceRefresh);
+        return token ?? '';
+      } catch (e) {
+        return '';
+      }
+    }
+    return '';
   }
 }
