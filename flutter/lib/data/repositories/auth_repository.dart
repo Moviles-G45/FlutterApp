@@ -14,7 +14,7 @@ class AuthRepository {
     fb.FirebaseAuth? firebaseAuth,
     String? baseUrl,
   })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-        _baseUrl = baseUrl ?? 'http://localhost:8000/auth';
+        _baseUrl = baseUrl ?? 'http://192.168.0.32:8000/auth';
 
   /// Sign in with Firebase, exchange token with backend, cache token, and return User.
   Future<User?> signIn(String email, String password) async {

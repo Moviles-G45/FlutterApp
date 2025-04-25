@@ -17,7 +17,6 @@ import 'services/app_providers.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
-import 'presentation/viewmodels/location_notifier_viewmodel.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
