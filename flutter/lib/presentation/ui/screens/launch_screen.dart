@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '/presentation/viewmodels/launch_viewmodel.dart';
 import '../widgets/custom_button.dart';
+import 'package:finances/config/theme/colors.dart';
 
 class LaunchScreen extends StatelessWidget {
   const LaunchScreen({super.key});
@@ -36,7 +37,7 @@ class LaunchScreen extends StatelessWidget {
       child: Consumer<LaunchViewModel>(
         builder: (context, vm, _) {
           return Scaffold(
-            backgroundColor: Colors.blueGrey[50],
+            backgroundColor: AppColors.launchBack,
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +57,7 @@ class LaunchScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   CustomButton(
                     text: "Sign Up",
-                    color: Colors.indigo,
+                    color: AppColors.strongBlue,
                     onPressed: () => _checkAndNavigate(context, '/signup'),
                   ),
                   const SizedBox(height: 10),
