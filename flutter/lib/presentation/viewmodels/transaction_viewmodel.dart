@@ -1,41 +1,38 @@
-import 'package:flutter/material.dart';
 import 'package:finances/data/models/transaction_model.dart';
 import 'package:finances/data/repositories/finances_repository.dart';
+import 'package:flutter/material.dart';
 
 class TransactionViewModel extends ChangeNotifier {
-  final FinancesRepository _repository;
+  final FinancesRepository _repo;
 
-  TransactionViewModel(this._repository);
+  List<TransactionModel> _transactions = [];
+  DateTimeRange? _dateRange;
+  bool _isLoading = false;
 
-  List<TransactionModel> transactions = [];
-  bool isLoading = false;
+  TransactionViewModel(this._repo);
 
-  DateTime? _startDate;
-  DateTime? _endDate;
+  List<TransactionModel> get transactions => _transactions;
+  bool get isLoading => _isLoading;
 
-  DateTime? get startDate => _startDate;
-  DateTime? get endDate => _endDate;
+  void setDateRange(DateTime start, DateTime end) {
+    _dateRange = DateTimeRange(start: start, end: end);
+    fetchTransactions();
+  }
 
- void setDateRange(DateTime start, DateTime end) {
-  _startDate = start;
-  _endDate = end;
-  print("setDateRange: $_startDate → $_endDate"); 
-  fetchTransactionsForRange();
-}
-
-
-  Future<void> fetchTransactionsForRange() async {
-    if (_startDate == null || _endDate == null) return;
-
-    isLoading = true;
+  Future<void> fetchTransactions() async {
+    _isLoading = true;
     notifyListeners();
 
     try {
-      transactions = await _repository.fetchTransactions(_startDate, _endDate);
+      final newTransactions = await _repo.fetchTransactions(
+        _dateRange?.start,
+        _dateRange?.end,
+      );
+      _transactions = newTransactions;
     } catch (e) {
-      print("Error fetching transactions: $e");
+      print("❌ Error al obtener transacciones: $e");
     } finally {
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
     }
   }
