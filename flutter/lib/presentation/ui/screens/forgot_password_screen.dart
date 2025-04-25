@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '/presentation/viewmodels/forgot_password_viewmodel.dart';
 import '../widgets/custom_button.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
+
+  Future<void> _checkAndPerform(
+      BuildContext context, VoidCallback action) async {
+    // Hide any existing banner
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      // No internet: show banner
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          content: const Text('No internet. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              child: const Text('CLOSE'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Connected: perform the action
+      action();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +49,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pushNamed(context, '/login'),
+                    onPressed: () => _checkAndPerform(
+                      context,
+                      () => Navigator.pushNamed(context, '/login'),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -83,12 +113,15 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Button / Loading
+                        // Send Link button / Loading
                         vm.isLoading
                             ? const CircularProgressIndicator()
                             : CustomButton(
                                 text: "Send Link",
-                                onPressed: () => vm.recover(context),
+                                onPressed: () => _checkAndPerform(
+                                  context,
+                                  () => vm.recover(context),
+                                ),
                               ),
                         const SizedBox(height: 20),
                         // Navigate to signup
@@ -101,8 +134,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                                   fontSize: 14, color: Colors.black54),
                             ),
                             GestureDetector(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/signup'),
+                              onTap: () => _checkAndPerform(
+                                context,
+                                () => Navigator.pushNamed(context, '/signup'),
+                              ),
                               child: const Text(
                                 "Sign Up",
                                 style: TextStyle(

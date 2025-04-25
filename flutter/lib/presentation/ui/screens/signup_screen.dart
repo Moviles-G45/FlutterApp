@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '/presentation/viewmodels/signup_viewmodel.dart';
 import '../widgets/custom_button.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
+
+  Future<void> _checkAndPerform(
+      BuildContext context, VoidCallback action) async {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          content: const Text('No internet. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      action();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +219,10 @@ class SignupScreen extends StatelessWidget {
                               ? const CircularProgressIndicator()
                               : CustomButton(
                                   text: 'Sign Up',
-                                  onPressed: () => vm.signup(context),
+                                  onPressed: () => _checkAndPerform(
+                                    context,
+                                    () => vm.signup(context),
+                                  ),
                                 ),
                           const SizedBox(height: 10),
                           Row(
@@ -207,8 +234,10 @@ class SignupScreen extends StatelessWidget {
                                     fontSize: 14, color: Colors.black54),
                               ),
                               GestureDetector(
-                                onTap: () =>
-                                    Navigator.pushNamed(context, '/login'),
+                                onTap: () => _checkAndPerform(
+                                  context,
+                                  () => Navigator.pushNamed(context, '/login'),
+                                ),
                                 child: const Text(
                                   'Log In',
                                   style: TextStyle(

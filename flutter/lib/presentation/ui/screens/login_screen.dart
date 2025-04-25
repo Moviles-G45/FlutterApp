@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '/presentation/viewmodels/login_viewmodel.dart';
 import '../widgets/custom_button.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
+
+  Future<void> _checkAndPerform(
+      BuildContext context, VoidCallback action) async {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          content: const Text('No internet. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      action();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +86,6 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 15),
 
                         // Password Field
@@ -86,36 +109,41 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 20),
 
+                        // Log In Button
                         vm.isLoading
                             ? const CircularProgressIndicator()
                             : CustomButton(
                                 text: "Log In",
-                                onPressed: () => vm.login(context),
+                                onPressed: () => _checkAndPerform(
+                                  context,
+                                  () => vm.login(context),
+                                ),
                               ),
-
                         const SizedBox(height: 10),
 
                         // Forgot Password
                         TextButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/recover'),
+                          onPressed: () => _checkAndPerform(
+                            context,
+                            () => Navigator.pushNamed(context, '/recover'),
+                          ),
                           child: const Text(
                             "Forgot Password?",
                             style: TextStyle(color: Colors.black54),
                           ),
                         ),
-
                         const SizedBox(height: 10),
 
                         // Sign Up
                         CustomButton(
                           text: "Sign Up",
                           color: const Color(0xFF006994),
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/signup'),
+                          onPressed: () => _checkAndPerform(
+                            context,
+                            () => Navigator.pushNamed(context, '/signup'),
+                          ),
                         ),
                       ],
                     ),
