@@ -11,11 +11,11 @@ class SpendingReminderService {
 
   void startMonitoring() {
     print("🧠 Starting weekend spending reminder...");
-    Timer.periodic(const Duration(minutes: 1), (_) async {
+    Timer.periodic(const Duration(hours: 1), (_) async {
       final now = DateTime.now();
        print("Current time: $now");
-      //final isWeekendNight = (now.weekday == DateTime.friday || now.weekday == DateTime.saturday) && now.hour >= 20;
-final isWeekendNight =true;
+      final isWeekendNight = (now.weekday == DateTime.friday || now.weekday == DateTime.saturday) && now.hour >= 20;
+//final isWeekendNight =true;
       if (isWeekendNight) {
         final title = "🧠 Weekend Spending Reminder";
         final message = "It's weekend night! Stay within your entertainment budget 🎯.";

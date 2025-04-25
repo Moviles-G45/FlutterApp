@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finances/config/theme/colors.dart';
 
+import '../../../services/auth_service.dart';
 import '../../viewmodels/expenses_viewmodel.dart';
 import '../../viewmodels/home_viewmodel.dart';
 import '../../viewmodels/transaction_viewmodel.dart';
@@ -10,19 +11,14 @@ import '../widgets_home/balance_card.dart';
 import '../widgets_home/expenses_card.dart';
 import '../widgets_home/transaction_filter_bar.dart';
 import '../widgets_home/transaction_list.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
-  
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isOffline = false;
-  
-
   @override
   void initState() {
     super.initState();
@@ -40,11 +36,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    final homeVM = Provider.of<HomeViewModel>(context); 
-  final isOffline = homeVM.isOffline; 
+    final homeVM = Provider.of<HomeViewModel>(context);
+    final isOffline = homeVM.isOffline;
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Signed out successfully")),
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
