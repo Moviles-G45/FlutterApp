@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '888136286585',
     projectId: 'budgetbuddyfb-171dd',
     storageBucket: 'budgetbuddyfb-171dd.firebasestorage.app',
-    iosBundleId: 'com.example.finances',
+    iosBundleId: 'com.example.budgedbuddy',
   );
 
 }
