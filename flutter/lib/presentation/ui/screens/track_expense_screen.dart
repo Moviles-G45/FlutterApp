@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
 import 'package:finances/services/notification_service.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +15,7 @@ class TrackExpenseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TrackExpenseViewModel(),
-      child: const _TrackExpenseView(),
-    );
+    return const _TrackExpenseView();
   }
 }
 
@@ -30,42 +30,35 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
   final GlobalKey<ExpenseDatePickerState> datePickerKey = GlobalKey();
   final GlobalKey<CategoriesInputFieldState> categoryPickerKey = GlobalKey();
 
-  Future<void> _onSavePressed(TrackExpenseViewModel viewModel) async {
-  FocusScope.of(context).unfocus();
-  final notificationService = Provider.of<NotificationService>(context, listen: false);
-  final error = await viewModel.saveExpense(notificationService:  notificationService);
-
-
-  if (error != null) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-  } else {
-    datePickerKey.currentState?.resetDate();
-    categoryPickerKey.currentState?.resetCategory();
-
-    // Recarga de transacciones
-    final transactionVM = Provider.of<TransactionViewModel>(context, listen: false);
-    transactionVM.fetchTransactions();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Transacción guardada exitosamente")),
-    );
-  }
-}
-
-
   TrackExpenseViewModel? _viewModel;
 
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  _viewModel ??= Provider.of<TrackExpenseViewModel>(context);
-}
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _viewModel ??= Provider.of<TrackExpenseViewModel>(context);
+  }
 
-@override
-void dispose() {
-  _viewModel?.disposeControllers(); 
-  super.dispose();
-}
+  Future<void> _onSavePressed(TrackExpenseViewModel viewModel) async {
+    FocusScope.of(context).unfocus();
+    final notificationService = Provider.of<NotificationService>(context, listen: false);
+    final error = await viewModel.saveExpense(notificationService: notificationService);
+
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+    } else {
+      datePickerKey.currentState?.resetDate();
+      categoryPickerKey.currentState?.resetCategory();
+      final transactionVM = Provider.of<TransactionViewModel>(context, listen: false);
+      await transactionVM.fetchTransactions();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Transacción guardada exitosamente")));
+    }
+  }
+
+  @override
+  void dispose() {
+    _viewModel?.disposeControllers();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +74,7 @@ void dispose() {
           onPressed: () => Navigator.pushNamed(context, '/home'),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: AppColors.cardBackground),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.notifications, color: AppColors.cardBackground), onPressed: () {}),
         ],
       ),
       body: GestureDetector(
@@ -111,7 +101,7 @@ void dispose() {
                 CategoriesInputField(
                   key: categoryPickerKey,
                   placeholder: 'Select the category',
-                  apiUrl: 'http://localhost:8000/categories',
+                  apiUrl: 'http://192.168.0.10:8000/categories',
                   onCategoryChanged: viewModel.setCategory,
                 ),
                 const SizedBox(height: 10),
