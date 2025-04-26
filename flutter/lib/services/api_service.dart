@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:finances/services/auth_service.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.0.32:8000";
+  static const String baseUrl = "http://192.168.0.10:8000";
 
   Future<String?> _getToken() async {
     return await AuthService().getIdToken();

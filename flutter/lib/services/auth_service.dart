@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String backendUrl = "http://192.168.0.32:8000/auth/login";
+  final String backendUrl = "http://192.168.0.10:8000/auth/login";
 
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
