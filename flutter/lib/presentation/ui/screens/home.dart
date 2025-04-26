@@ -19,19 +19,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<HomeViewModel>(context, listen: false).fetchBalance();
-      Provider.of<ExpensesViewModel>(context, listen: false).fetchExpenses();
 
-      final now = DateTime.now();
-      final start = DateTime(now.year, now.month, 1);
-      final end = DateTime(now.year, now.month + 1, 0);
-      Provider.of<TransactionViewModel>(context, listen: false).setDateRange(start, end);
-    });
-  }
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (!mounted) return;
+    
+    final homeVM = context.read<HomeViewModel>();
+    final expensesVM = context.read<ExpensesViewModel>();
+    final transactionVM = context.read<TransactionViewModel>();
+
+    await Future.wait([
+      homeVM.fetchBalance(),
+      expensesVM.fetchExpenses(),
+    ]);
+
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, 1);
+    final end = DateTime(now.year, now.month + 1, 0);
+
+    transactionVM.setDateRange(start, end);
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {

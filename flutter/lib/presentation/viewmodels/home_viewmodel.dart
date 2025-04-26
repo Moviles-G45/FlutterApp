@@ -8,7 +8,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomeViewModel extends ChangeNotifier {
   final FinancesRepository _repo;
 
+  bool _disposed = false;
+
   HomeViewModel(this._repo);
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  void safeNotifyListeners() {
+    if (!_disposed) notifyListeners();
+  }
 
   double _totalBalance = 0.0;
   double _totalExpense = 0.0;
@@ -25,8 +37,7 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> fetchBalance() async {
     _isLoading = true;
-    notifyListeners();
-    print("🔄 Fetching balance...");
+    safeNotifyListeners();
 
     final hasInternet = await _checkConnection();
 
@@ -40,19 +51,16 @@ class HomeViewModel extends ChangeNotifier {
         _isOffline = false;
 
         await _cacheData(balanceData);
-        print("✅ Online data loaded: ${balanceData.balance}");
       } catch (e) {
-        print("❌ Error fetching balance from API: $e");
         await _loadFromCache();
       }
     } else {
-      print("📴 No internet. Loading from cache...");
       await _loadFromCache();
       _isOffline = true;
     }
 
     _isLoading = false;
-    notifyListeners();
+    safeNotifyListeners();
   }
 
   Future<void> _cacheData(BalanceModel data) async {
