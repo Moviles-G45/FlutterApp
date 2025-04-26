@@ -39,26 +39,36 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
   }
 
   Future<void> _onSavePressed(TrackExpenseViewModel viewModel) async {
-    FocusScope.of(context).unfocus();
-    final notificationService = Provider.of<NotificationService>(context, listen: false);
+  FocusScope.of(context).unfocus();
+
+    final notificationService = context.read<NotificationService>();
     final error = await viewModel.saveExpense(notificationService: notificationService);
+
+    if (!mounted) return; // Proteger por si se cerró pantalla
 
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     } else {
       datePickerKey.currentState?.resetDate();
       categoryPickerKey.currentState?.resetCategory();
-      final transactionVM = Provider.of<TransactionViewModel>(context, listen: false);
-      await transactionVM.fetchTransactions();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Transacción guardada exitosamente")));
-    }
+
+      // Recargar transacciones SIN bloquear UI
+      Future.microtask(() {
+        context.read<TransactionViewModel>().fetchTransactions();
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Transacción guardada exitosamente")),
+    );
   }
+}
+
 
   @override
   void dispose() {
-    _viewModel?.disposeControllers();
-    super.dispose();
-  }
+  super.dispose();
+}
+
 
   @override
   Widget build(BuildContext context) {

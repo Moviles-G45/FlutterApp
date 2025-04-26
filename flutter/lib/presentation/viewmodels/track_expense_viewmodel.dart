@@ -13,16 +13,16 @@ class TrackExpenseViewModel extends ChangeNotifier {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
-  bool _isRetrying = false; // 🔥 para no hacer reintentos múltiples a la vez
+  bool _disposed = false;
 
   void setDate(DateTime? date) {
     selectedDate = date;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void setCategory(int? id) {
     selectedCategoryId = id;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void resetFields() {
@@ -30,10 +30,10 @@ class TrackExpenseViewModel extends ChangeNotifier {
     descriptionController.clear();
     selectedDate = null;
     selectedCategoryId = null;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
-  Future<String?> saveExpense({NotificationService? notificationService}) async {
+  Future<String?> saveExpense({required NotificationService notificationService}) async {
     if (selectedDate == null || selectedCategoryId == null || amountController.text.isEmpty || descriptionController.text.isEmpty) {
       return "Por favor completa todos los campos";
     }
@@ -50,9 +50,9 @@ class TrackExpenseViewModel extends ChangeNotifier {
 
     if (!isOnline) {
       await _saveExpenseLocally(expense);
-      await notificationService?.showLocalNotification("Sin conexión", "Tu transacción será enviada cuando recuperes internet.");
+      await notificationService.showLocalNotification("Sin conexión", "Tu transacción será enviada cuando recuperes internet.");
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        resetFields();
+        if (!_disposed) resetFields();
       });
       return null;
     }
@@ -60,68 +60,23 @@ class TrackExpenseViewModel extends ChangeNotifier {
     final error = await _sendExpenseOnline(expense);
     if (error == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        resetFields();
+        if (!_disposed) resetFields();
       });
     }
     return error;
   }
 
-  Future<void> retryPendingExpenses() async {
-    if (_isRetrying) return;
-    _isRetrying = true;
-
-    final prefs = await SharedPreferences.getInstance();
-    final pending = prefs.getStringList('pending_expenses') ?? [];
-    if (pending.isEmpty) {
-      _isRetrying = false;
-      return;
-    }
-
-    final idToken = await AuthService().getIdToken();
-    if (idToken == null) {
-      _isRetrying = false;
-      return;
-    }
-
-    final url = Uri.parse("http://192.168.0.10:8000/transactions");
-
-    List<String> stillPending = [];
-
-    for (final jsonString in pending) {
-      try {
-        final jsonMap = jsonDecode(jsonString);
-        final response = await http.post(
-          url,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $idToken",
-          },
-          body: jsonEncode(jsonMap),
-        );
-
-        if (response.statusCode != 200 && response.statusCode != 201) {
-          stillPending.add(jsonString);
-        }
-      } catch (_) {
-        stillPending.add(jsonString);
-      }
-    }
-
-    await prefs.setStringList('pending_expenses', stillPending);
-    _isRetrying = false;
-  }
-
   Future<void> _saveExpenseLocally(TrackExpense expense) async {
     final prefs = await SharedPreferences.getInstance();
-    final pending = prefs.getStringList('pending_expenses') ?? [];
-    pending.add(jsonEncode(expense.toJson()));
-    await prefs.setStringList('pending_expenses', pending);
+    final cached = prefs.getStringList('cached_transactions') ?? [];
+    cached.add(jsonEncode(expense.toJson()));
+    await prefs.setStringList('cached_transactions', cached);
   }
 
   Future<String?> _sendExpenseOnline(TrackExpense expense) async {
     final idToken = await AuthService().getIdToken();
     if (idToken == null) {
-      return "Error de autenticación. Por favor inicia sesión de nuevo.";
+      return "Error de autenticación.";
     }
 
     final url = Uri.parse("http://192.168.0.10:8000/transactions");
@@ -146,8 +101,15 @@ class TrackExpenseViewModel extends ChangeNotifier {
     }
   }
 
-  void disposeControllers() {
+  void _safeNotifyListeners() {
+    if (!_disposed) notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
     amountController.dispose();
     descriptionController.dispose();
+    super.dispose();
   }
 }
