@@ -1,5 +1,6 @@
 import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
 import 'package:finances/presentation/viewmodels/home_viewmodel.dart';
+import 'package:finances/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -103,7 +104,7 @@ class _MapScreenState extends State<MapScreen> {
     final isOffline = homeVM.isOffline;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mapa de Cajeros", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: const Text("ATMs Map", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.background,
         centerTitle: true,
         leading: IconButton(
@@ -112,8 +113,16 @@ class _MapScreenState extends State<MapScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications, color: AppColors.cardBackground),
-            onPressed: () {},
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Signed out successfully")),
+                );
+              }
+            },
           ),
         ],
       ),
