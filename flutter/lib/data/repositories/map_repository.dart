@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MapRepository {
-  final String _baseUrl = 'http://157.253.124.26:8000';
+  final String _baseUrl = 'https://fastapi-service-185169107324.us-central1.run.app';
 
   Future<List<dynamic>> fetchNearbyATMs({
     required double latitude,

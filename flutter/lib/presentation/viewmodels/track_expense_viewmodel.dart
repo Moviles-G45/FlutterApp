@@ -79,7 +79,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
       return "Error de autenticación.";
     }
 
-    final url = Uri.parse("http://192.168.0.10:8000/transactions");
+    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/transactions");
 
     try {
       final response = await http.post(
