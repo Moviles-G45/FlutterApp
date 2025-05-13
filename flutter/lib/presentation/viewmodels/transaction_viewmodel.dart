@@ -42,7 +42,7 @@ class TransactionViewModel extends ChangeNotifier {
 
       _transactions = newTransactions;
     } catch (e) {
-      print("❌ Error al obtener transacciones: $e");
+      print(" Error al obtener transacciones: $e");
       _transactions = []; // 🔥 En caso de error, limpia para evitar basura visual
     } finally {
       _isLoading = false;
