@@ -111,7 +111,7 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
                 CategoriesInputField(
                   key: categoryPickerKey,
                   placeholder: 'Select the category',
-                  apiUrl: 'http://192.168.0.10:8000/categories',
+                  apiUrl: 'https://fastapi-service-185169107324.us-central1.run.app/categories',
                   onCategoryChanged: viewModel.setCategory,
                 ),
                 const SizedBox(height: 10),
