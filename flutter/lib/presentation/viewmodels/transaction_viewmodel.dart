@@ -8,7 +8,7 @@ class TransactionViewModel extends ChangeNotifier {
   List<TransactionModel> _transactions = [];
   DateTimeRange? _dateRange;
   bool _isLoading = false;
-  bool _disposed = false; // 🔥 Protección contra dispose
+  bool _disposed = false; 
 
   TransactionViewModel(this._repo);
 
@@ -27,7 +27,7 @@ class TransactionViewModel extends ChangeNotifier {
 
   void setDateRange(DateTime start, DateTime end) {
     _dateRange = DateTimeRange(start: start, end: end);
-    fetchTransactions(); // 🔥 Directamente recargar cuando cambia rango
+    fetchTransactions(); //
   }
 
   Future<void> fetchTransactions() async {
@@ -43,7 +43,7 @@ class TransactionViewModel extends ChangeNotifier {
       _transactions = newTransactions;
     } catch (e) {
       print(" Error al obtener transacciones: $e");
-      _transactions = []; // 🔥 En caso de error, limpia para evitar basura visual
+      _transactions = []; 
     } finally {
       _isLoading = false;
       _safeNotifyListeners();
