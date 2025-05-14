@@ -1,42 +1,87 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:finances/data/models/transaction_model.dart';
-import 'package:finances/data/repositories/finances_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../data/models/transaction_model.dart';
+import '../../data/repositories/finances_repository.dart';
+
 
 class TransactionViewModel extends ChangeNotifier {
-  final FinancesRepository _repository;
+  final FinancesRepository _repo;
 
-  TransactionViewModel(this._repository);
+  List<TransactionModel> _transactions = [];
+  DateTimeRange? _dateRange;
+  bool _isLoading = false;
+  bool _disposed = false;
 
-  List<TransactionModel> transactions = [];
-  bool isLoading = false;
+  static const String _cacheKey = 'cached_transactions';
 
-  DateTime? _startDate;
-  DateTime? _endDate;
+  TransactionViewModel(this._repo);
 
-  DateTime? get startDate => _startDate;
-  DateTime? get endDate => _endDate;
+  List<TransactionModel> get transactions => _transactions;
+  bool get isLoading => _isLoading;
 
- void setDateRange(DateTime start, DateTime end) {
-  _startDate = start;
-  _endDate = end;
-  print("setDateRange: $_startDate → $_endDate"); 
-  fetchTransactionsForRange();
-}
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
 
+  void _safeNotifyListeners() {
+    if (!_disposed) notifyListeners();
+  }
 
-  Future<void> fetchTransactionsForRange() async {
-    if (_startDate == null || _endDate == null) return;
+  void setDateRange(DateTime start, DateTime end) {
+    _dateRange = DateTimeRange(start: start, end: end);
+    fetchTransactions();
+  }
 
-    isLoading = true;
-    notifyListeners();
+  Future<void> fetchTransactions() async {
+    _isLoading = true;
+    _safeNotifyListeners();
 
     try {
-      transactions = await _repository.fetchTransactions(_startDate, _endDate);
+      final newTransactions = await _repo.fetchTransactions(
+        _dateRange?.start,
+        _dateRange?.end,
+      );
+
+      _transactions = newTransactions;
+      await _cacheTransactions(newTransactions); // Guardar en caché
+      print("✅ Transactions fetched from API");
     } catch (e) {
-      print("Error fetching transactions: $e");
+      print("❌ Error fetching transactions: $e");
+      await _loadFromCache(); // Intentar cargar desde el caché
     } finally {
-      isLoading = false;
-      notifyListeners();
+      _isLoading = false;
+      _safeNotifyListeners();
+    }
+  }
+
+  Future<void> _cacheTransactions(List<TransactionModel> transactions) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonList = transactions.map((t) => t.toJson()).toList();
+      await prefs.setString(_cacheKey, json.encode(jsonList));
+      print("💾 Transactions cached successfully");
+    } catch (e) {
+      print("⚠️ Error caching transactions: $e");
+    }
+  }
+
+  Future<void> _loadFromCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_cacheKey);
+      if (jsonString != null) {
+        final List<dynamic> jsonList = json.decode(jsonString);
+        _transactions = jsonList.map((item) => TransactionModel.fromJson(item)).toList();
+        print("📂 Transactions loaded from cache");
+      } else {
+        print("⚠️ No cached transactions found");
+      }
+    } catch (e) {
+      print("⚠️ Error loading transactions from cache: $e");
     }
   }
 }
