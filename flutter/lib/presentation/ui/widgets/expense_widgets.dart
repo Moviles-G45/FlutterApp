@@ -1,5 +1,6 @@
 import 'package:finances/config/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -185,6 +186,10 @@ class ExpenseInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+      ],
       decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: Colors.grey.shade600),
@@ -207,6 +212,7 @@ class ExpenseMessageBox extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: 3,
+      maxLength: 100,
       decoration: InputDecoration(
         filled: true,
         fillColor: AppColors.mediumBlue,

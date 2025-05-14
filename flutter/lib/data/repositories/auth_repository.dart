@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart'; // ← para debugPrint
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/user_model.dart';
 import '../models/signup_response.dart';
 import '../models/recover_response.dart';
@@ -22,7 +20,6 @@ class AuthRepository {
   Future<User?> signIn(String email, String password) async {
     try {
       // 1. Firebase sign-in
-      debugPrint('🔑 Signing in with Firebase: $email');
       final cred = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -31,20 +28,11 @@ class AuthRepository {
       if (idToken == null) throw Exception('Unable to obtain idToken');
 
       // 2. Send token to backend
-      final url = Uri.parse('$_baseUrl/login');
-      final payload = {'token': idToken};
-      debugPrint('➡️ POST $url');
-      debugPrint('Headers: Content-Type: application/json');
-      debugPrint('Body: ${jsonEncode(payload)}');
-
       final resp = await http.post(
-        url,
+        Uri.parse('$_baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
+        body: jsonEncode({'token': idToken}),
       );
-
-      debugPrint('⬅️ Status ${resp.statusCode}');
-      debugPrint('Response: ${resp.body}');
 
       if (resp.statusCode != 200) {
         throw Exception('Login failed: ${resp.statusCode}');
@@ -56,9 +44,8 @@ class AuthRepository {
       await prefs.setString('auth_token', idToken);
 
       return User.fromMap(data);
-    } catch (e, stack) {
-      debugPrint('❌ signIn error: $e');
-      debugPrint('$stack');
+    } catch (_) {
+      // swallow errors, return null to indicate failure
       return null;
     }
   }
@@ -72,26 +59,19 @@ class AuthRepository {
     required int phoneNumber,
   }) async {
     final url = Uri.parse('$_baseUrl/signup');
-    final payload = {
+    final body = jsonEncode({
       'full_name': fullName,
       'email': email,
       'password': password,
       'date_of_birth': dateOfBirth.toIso8601String(),
       'phone_number': phoneNumber,
-    };
-
-    debugPrint('➡️ POST $url');
-    debugPrint('Headers: Content-Type: application/json');
-    debugPrint('Body: ${jsonEncode(payload)}');
+    });
 
     final resp = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(payload),
+      body: body,
     );
-
-    debugPrint('⬅️ Status ${resp.statusCode}');
-    debugPrint('Response: ${resp.body}');
 
     if (resp.statusCode != 200) {
       throw Exception('Signup failed: ${resp.statusCode}');

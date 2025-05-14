@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '/presentation/viewmodels/launch_viewmodel.dart';
 import '../widgets/custom_button.dart';
 import 'package:finances/config/theme/colors.dart';
-import '/presentation/viewmodels/launch_viewmodel.dart';
 
 class LaunchScreen extends StatelessWidget {
   const LaunchScreen({super.key});
+
+  Future<void> _checkAndNavigate(BuildContext context, String route) async {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          content: const Text('No internet. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.pushNamed(context, route);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => LaunchViewModel(),
       child: Consumer<LaunchViewModel>(
-        builder: (context, viewModel, _) {
+        builder: (context, vm, _) {
           return Scaffold(
             backgroundColor: AppColors.launchBack,
             body: Center(
@@ -29,17 +52,17 @@ class LaunchScreen extends StatelessWidget {
                   CustomButton(
                     text: "Log In",
                     color: const Color(0xFF006994),
-                    onPressed: () => viewModel.onLogin(context),
+                    onPressed: () => _checkAndNavigate(context, '/login'),
                   ),
                   const SizedBox(height: 10),
                   CustomButton(
                     text: "Sign Up",
                     color: AppColors.strongBlue,
-                    onPressed: () => viewModel.onSignUp(context),
+                    onPressed: () => _checkAndNavigate(context, '/signup'),
                   ),
                   const SizedBox(height: 10),
                   TextButton(
-                    onPressed: () => viewModel.onRecover(context),
+                    onPressed: () => _checkAndNavigate(context, '/recover'),
                     child: const Text(
                       "Forgot Password?",
                       style: TextStyle(color: Colors.black54),

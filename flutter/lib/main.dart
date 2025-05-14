@@ -1,8 +1,9 @@
+import 'package:finances/services/connectivity_monitor.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:provider/provider.dart';
 import 'config/theme/app_theme.dart';
 import 'presentation/ui/screens/create_budget_screen.dart';
 import 'presentation/ui/screens/launch_screen.dart';
@@ -48,6 +49,8 @@ void main() async {
   final notificationService = NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
 
+   ConnectivityMonitor().startMonitoring();
+
   // Inicia recordatorios de gasto de fin de semana
   final spendingReminderService = SpendingReminderService(
     notificationService: notificationService,
@@ -64,7 +67,11 @@ void main() async {
   locationNotifier.startMonitoring();
 
   // Corre la app
-  runApp(const MyApp());
+  runApp( Provider<NotificationService>.value(
+      value: notificationService,
+      child: const MyApp(),
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -72,6 +79,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   ConnectivityMonitor().startMonitoring(context);
+    // });
     return AppProviders(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

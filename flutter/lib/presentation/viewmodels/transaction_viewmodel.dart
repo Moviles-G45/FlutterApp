@@ -12,6 +12,7 @@ class TransactionViewModel extends ChangeNotifier {
   List<TransactionModel> _transactions = [];
   DateTimeRange? _dateRange;
   bool _isLoading = false;
+
   bool _disposed = false;
 
   static const String _cacheKey = 'cached_transactions';
@@ -34,6 +35,7 @@ class TransactionViewModel extends ChangeNotifier {
   void setDateRange(DateTime start, DateTime end) {
     _dateRange = DateTimeRange(start: start, end: end);
     fetchTransactions();
+
   }
 
   Future<void> fetchTransactions() async {
@@ -47,6 +49,7 @@ class TransactionViewModel extends ChangeNotifier {
       );
 
       _transactions = newTransactions;
+
       await _cacheTransactions(newTransactions); // Guardar en caché
       print("✅ Transactions fetched from API");
     } catch (e) {

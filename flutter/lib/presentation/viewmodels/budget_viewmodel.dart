@@ -35,9 +35,9 @@ Future<bool> saveBudget() async {
       "month": now.month,
       "year": now.year,
       "budget_category_types": [
-        {"category_type": 2, "percentage": savings},
-        {"category_type": 3, "percentage": needs},
-        {"category_type": 4, "percentage": wants},
+        {"category_type": 4, "percentage": savings},
+        {"category_type": 2, "percentage": needs},
+        {"category_type": 3, "percentage": wants},
       ]
     };
 
