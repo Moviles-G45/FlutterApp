@@ -41,12 +41,14 @@ class ExpensesViewModel extends ChangeNotifier {
             'CategoryType: ${budget.categoryType}, Percentage: ${budget.percentage}');
       }
       print(savings);
-      
+
       savingsBudget = (savingsBudgetItem.percentage / 100) * earnings;
      
       savingsProgress =
           savingsBudget > 0 ? (savings / savingsBudget).clamp(0.0, 1.0) : 0.0;
-          print("sav: $savingsProgress");
+
+          print(savingsProgress);
+
     } catch (e) {
       print("Error fetching expenses: $e");
     } finally {
