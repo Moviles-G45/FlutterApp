@@ -68,7 +68,7 @@ class _MapScreenState extends State<MapScreen> {
   Future<List<dynamic>> fetchNearbyATMs(double lat, double lon, double radius) async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.0.10:8000/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
+          'https://fastapi-service-185169107324.us-central1.run.app/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
