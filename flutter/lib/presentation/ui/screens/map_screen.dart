@@ -68,6 +68,24 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+<<<<<<< HEAD
+=======
+  Future<List<dynamic>> fetchNearbyATMs(double lat, double lon, double radius) async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://fastapi-service-185169107324.us-central1.run.app/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Error al cargar cajeros');
+      }
+    } catch (e) {
+      print("❌ Error en fetchNearbyATMs: $e");
+      return [];
+    }
+  }
+
+>>>>>>> master
   void _updateAtmMarkers(List<dynamic> atmList) {
     final Set<Marker> newMarkers = atmList.map((atm) {
       return Marker(
