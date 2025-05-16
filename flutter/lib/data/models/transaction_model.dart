@@ -17,37 +17,24 @@ class TransactionModel {
     required this.iconName,
   });
 
-  /// Convertir el objeto a un mapa para almacenamiento en caché
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'category': category,
-        'categoryType': categoryType,
-        'isExpense': isExpense,
-        'amount': amount,
-        'time': time,
-        'iconName': iconName,
-      };
-
-  /// Crear el objeto a partir de un mapa JSON
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
-    final category = json['category'] ?? {};
-    final categoryType = category['category_type'] ?? {};
+    final category = json['category'];
+    final categoryType = category['category_type'];
 
-    final String type = categoryType['name'] ?? 'unknown';
+    final String type = categoryType['name'];
     final bool isExpense = (type == 'needs' || type == 'wants' || type == 'savings');
 
     return TransactionModel(
-      title: json['title'] ?? json['description'] ?? 'Unknown',
-      category: category['name'] ?? 'Unknown',
+      title: json['description'],
+      category: category['name'],
       categoryType: type,
       isExpense: isExpense,
       amount: double.tryParse(json['amount'].toString()) ?? 0.0,
-      time: json['time'] ?? json['date'] ?? '',
-      iconName: _guessIcon(category['name'] ?? 'Unknown'),
+      time: json['date'],
+      iconName: _guessIcon(category['name']),
     );
   }
 
-  /// Adivinar el ícono según el nombre de la categoría
   static String _guessIcon(String categoryName) {
     final map = {
       'Salary': 'salary',
@@ -59,12 +46,5 @@ class TransactionModel {
       'Emergency Fund': 'savings',
     };
     return map[categoryName] ?? 'receipt';
-  }
-
-  /// Conversión a String para depuración
-  @override
-  String toString() {
-    return 'TransactionModel(title: $title, category: $category, type: $categoryType, '
-        'isExpense: $isExpense, amount: $amount, time: $time, icon: $iconName)';
   }
 }
