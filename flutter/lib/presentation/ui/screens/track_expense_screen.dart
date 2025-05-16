@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
+import 'package:finances/services/auth_service.dart';
 import 'package:finances/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -84,7 +83,18 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
           onPressed: () => Navigator.pushNamed(context, '/home'),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.notifications, color: AppColors.cardBackground), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Signed out successfully")),
+                );
+              }
+            },
+          ),
         ],
       ),
       body: GestureDetector(
