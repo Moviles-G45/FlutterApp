@@ -4,8 +4,23 @@ import 'package:finances/presentation/viewmodels/budget_viewmodel.dart';
 import 'package:finances/config/theme/colors.dart';
 import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
 
-class CreateBudgetScreen extends StatelessWidget {
+class CreateBudgetScreen extends StatefulWidget {
   const CreateBudgetScreen({super.key});
+
+  @override
+  _CreateBudgetScreenState createState() => _CreateBudgetScreenState();
+}
+
+class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Verificar si ya existe un presupuesto al cargar la pantalla
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = Provider.of<BudgetViewModel>(context, listen: false);
+      vm.checkExistingBudget();
+    });
+  }
 
   Widget _buildSlider({
     required String label,
@@ -44,20 +59,20 @@ class CreateBudgetScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // Fondo y encabezado
+            // Encabezado
             Column(
               children: [
                 const SizedBox(height: 20),
                 const Center(
                   child: Text(
-                    "Create Monthly Budget",
+                    "Create or Update Monthly Budget",
                     style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 40),
               ],
             ),
-            // Card superpuesta
+            // Formulario de presupuesto
             Positioned(
               top: MediaQuery.of(context).size.height * 0.18,
               left: 0,
@@ -75,28 +90,39 @@ class CreateBudgetScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSlider(label: "Needs", value: vm.needs, onChanged: vm.updateNeeds),
-                    _buildSlider(label: "Wants", value: vm.wants, onChanged: vm.updateWants),
-                    _buildSlider(label: "Savings", value: vm.savings, onChanged: vm.updateSavings),
+                    _buildSlider(
+                      label: "Needs",
+                      value: vm.needs,
+                      onChanged: vm.updateNeeds,
+                    ),
+                    _buildSlider(
+                      label: "Wants",
+                      value: vm.wants,
+                      onChanged: vm.updateWants,
+                    ),
+                    _buildSlider(
+                      label: "Savings",
+                      value: vm.savings,
+                      onChanged: vm.updateSavings,
+                    ),
                     const SizedBox(height: 32),
                     Center(
                       child: ElevatedButton(
                         onPressed: vm.isLoading
-    ? null
-    : () async {
-        final success = await vm.saveBudget();
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(success
-                  ? "✅ Budget saved successfully!"
-                  : "⚠️ Failed to save budget. Please check the values."),
-              backgroundColor: success ? Colors.green : Colors.red,
-            ),
-          );
-        }
-      },
-
+                            ? null
+                            : () async {
+                                final success = await vm.saveOrUpdateBudget();
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(success
+                                          ? "✅ Budget ${vm.hasBudget ? 'updated' : 'saved'} successfully!"
+                                          : "⚠️ Failed to save or update budget. Recalculate your budget."),
+                                      backgroundColor: success ? Colors.green : Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.darkBlue,
                           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
@@ -108,9 +134,15 @@ class CreateBudgetScreen extends StatelessWidget {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               )
-                            : const Text("Save", style: TextStyle(color: Colors.white)),
+                            : Text(
+                                vm.hasBudget ? "Update" : "Save",
+                                style: const TextStyle(color: Colors.white),
+                              ),
                       ),
                     ),
                   ],
@@ -120,7 +152,7 @@ class CreateBudgetScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar:  BottomNavBar(),
     );
   }
 }
