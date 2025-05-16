@@ -57,7 +57,6 @@ void main() async {
   );
   spendingReminderService.startMonitoring();
 
-
   // Inicia notificaciones basadas en ubicación
 
   final locationNotifier = LocationNotifierViewModel(
