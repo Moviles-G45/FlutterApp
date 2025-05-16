@@ -109,9 +109,10 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
                 CategoriesInputField(
                   key: categoryPickerKey,
                   placeholder: 'Select the category',
-                  apiUrl: 'https://fastapi-service-185169107324.us-central1.run.app/categories',
-                  onCategoryChanged: viewModel.setCategory,
+                  selectedCategory: viewModel.selectedCategory,
+                  onCategorySelected: viewModel.setCategory,
                 ),
+
                 const SizedBox(height: 10),
                 const ExpenseLabel(text: "Amount"),
                 ExpenseInputField(
