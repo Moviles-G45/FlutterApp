@@ -44,6 +44,6 @@ class PendingTransactionService {
       }
     }
 
-    await prefs.setStringList('cached_transactions', stillPending);
+    // await prefs.setStringList('cached_transactions', stillPending);
   }
 }
