@@ -1,4 +1,4 @@
-import 'package:finances/services/connectivity_monitor.dart';
+import 'package:finances/services/connectivity_monitor.dart'; // Ensure this import is correct and the file exists
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
