@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 
-
 class ExpenseLabel extends StatelessWidget {
   final String text;
   const ExpenseLabel({Key? key, required this.text}) : super(key: key);
@@ -33,7 +32,6 @@ class ExpenseDatePicker extends StatefulWidget {
   @override
   ExpenseDatePickerState createState() => ExpenseDatePickerState();
 }
-
 
 class ExpenseDatePickerState extends State<ExpenseDatePicker> {
   DateTime? selectedDate;
@@ -191,6 +189,7 @@ class ExpenseInputField extends StatelessWidget {
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+        LengthLimitingTextInputFormatter(10)
       ],
       decoration: InputDecoration(
         hintText: placeholder,
