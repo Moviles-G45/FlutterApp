@@ -57,7 +57,7 @@ class LocationNotifierViewModel extends ChangeNotifier {
         name: 'Universidad de los Andes',
         latitude: 4.603334,
         longitude: -74.064598),
-        MallLocation(name: 'Coordenadas', latitude:  4.725919260339369, longitude: -74.02921484189979),
+        MallLocation(name: 'Coordenadas', latitude: 4.7245, longitude: -74.028528),
   ];
 
   Timer? _monitorTimer;
@@ -86,12 +86,7 @@ class LocationNotifierViewModel extends ChangeNotifier {
           final message =
               "You're near $nearbyMallName. Did you spend anything? 💸";
 
-         await notificationService.showLocalNotification(
-  title,
-  message,
-  payload: '/tracking', // Ruta a la pantalla de gastos
-);
-
+          await notificationService.showLocalNotification(title, message);
 
           await notificationService.saveNotification(
             AppNotification(

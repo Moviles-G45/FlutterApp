@@ -22,8 +22,6 @@ import 'services/spending_reminder_service.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -41,15 +39,7 @@ void main() async {
 
   final initSettings = InitializationSettings(iOS: iosInit);
 
-  await flutterLocalNotificationsPlugin.initialize(
-    initSettings,
-    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
-      final String? payload = notificationResponse.payload;
-      if (payload != null) {
-        navigatorKey.currentState?.pushNamed(payload);
-      }
-    },
-  );
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
@@ -59,7 +49,7 @@ void main() async {
   final notificationService = NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
 
-   ConnectivityMonitor().startMonitoring();//❗️🙂🙂‼️
+   ConnectivityMonitor().startMonitoring();
 
   // Inicia recordatorios de gasto de fin de semana
   final spendingReminderService = SpendingReminderService(
@@ -94,7 +84,6 @@ class MyApp extends StatelessWidget {
     // });
     return AppProviders(
       child: MaterialApp(
-         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         initialRoute: '/',
