@@ -1,4 +1,3 @@
-import 'package:finances/presentation/viewmodels/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,18 +13,6 @@ class TransactionFilterBar extends StatefulWidget {
 class _TransactionFilterBarState extends State<TransactionFilterBar> {
   DateTime? _startDate;
   DateTime? _endDate;
-  late final HomeViewModel homeVM;
-  late final bool isOffline;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeVM = Provider.of<HomeViewModel>(context, listen: false);
-      isOffline = homeVM.isOffline;
-    });
-  }
-
 
   Future<void> _selectDate(BuildContext context, bool isStart) async {
     DateTime initialDate = DateTime.now();
@@ -83,12 +70,6 @@ void _applyFilter() {
   final viewModel = Provider.of<TransactionViewModel>(context, listen: false);
   final now = DateTime.now();
 
-  // Verificar si hay conexión a internet antes de aplicar el filtro
-  if (isOffline) {
-    _showMessage(context, "You are offline. Please check your connection.", Colors.redAccent);
-    return;
-  }
-
   try {
     final start = _startDate ?? DateTime(now.year, now.month, 1);
     final end = _endDate ?? DateTime(now.year, now.month + 1, 0);
@@ -101,16 +82,13 @@ void _applyFilter() {
     print("Applying date filter: From $start to $end");
     viewModel.setDateRange(start, end);
     _showMessage(context, "Filter applied successfully.", Colors.green);
-
-    // Limpiar las fechas después de aplicar el filtro
-    _startDate = null;
-    _endDate = null;
+     _startDate = null;
+              _endDate = null;
   } catch (e) {
     _showMessage(context, "Error applying filter. Please try again.", Colors.redAccent);
     print("Error applying filter: $e");
   }
 }
-
 
 
 

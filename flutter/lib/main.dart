@@ -49,7 +49,7 @@ void main() async {
   final notificationService = NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
 
-   ConnectivityMonitor().startMonitoring();//❗️🙂🙂‼️
+   ConnectivityMonitor().startMonitoring();
 
   // Inicia recordatorios de gasto de fin de semana
   final spendingReminderService = SpendingReminderService(
