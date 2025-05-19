@@ -20,7 +20,7 @@ import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
 import 'data/models/transaction_model.dart';
-import 'services/transaction_cache.dart';
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

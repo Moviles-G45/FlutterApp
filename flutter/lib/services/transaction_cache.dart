@@ -17,7 +17,7 @@ class TransactionCache {
       await box.clear();
       for (var i = 0; i < transactions.length; i++) {
         await box.put(i, transactions[i]);
-        print("💾 Saved transaction at index $i: ${transactions[i].title}");
+        print("Saved transaction at index $i: ${transactions[i].title}");
       }
       print("✅ All transactions saved to cache.");
     } catch (e) {
@@ -48,19 +48,7 @@ class TransactionCache {
     }
   }
 
-  static Future<TransactionModel?> getTransaction(int index) async {
-    try {
-      final box = await _openBox();
-      final transaction = box.get(index);
-      print("✅ Transaction retrieved from cache: $transaction");
-      if (transaction is TransactionModel) return transaction;
-      if (transaction is Map) return TransactionModel.fromJson(Map<String, dynamic>.from(transaction!));
-      return null;
-    } catch (e) {
-      print("❌ Error getting transaction from cache: $e");
-      return null;
-    }
-  }
+
 
   static Future<void> deleteTransaction(int index) async {
     try {
