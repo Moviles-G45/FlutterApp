@@ -19,6 +19,7 @@ import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
 
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -49,7 +50,7 @@ void main() async {
   final notificationService = NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
 
-   ConnectivityMonitor().startMonitoring();//❗️🙂🙂‼️
+   ConnectivityMonitor().startMonitoring();
 
   // Inicia recordatorios de gasto de fin de semana
   final spendingReminderService = SpendingReminderService(
