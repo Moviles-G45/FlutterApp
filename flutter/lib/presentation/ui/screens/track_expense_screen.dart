@@ -1,14 +1,14 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
+import 'package:finances/presentation/viewmodels/track_expense_viewmodel.dart';
+import 'package:finances/services/auth_service.dart';
 import 'package:finances/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finances/config/theme/colors.dart';
 import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
 import 'package:finances/presentation/ui/widgets/expense_widgets.dart';
-import 'package:finances/presentation/viewmodels/track_expense_viewmodel.dart';
+
 
 class TrackExpenseScreen extends StatelessWidget {
   const TrackExpenseScreen({Key? key}) : super(key: key);
@@ -63,10 +63,12 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
   }
 }
 
+
   @override
   void dispose() {
   super.dispose();
 }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,18 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
           onPressed: () => Navigator.pushNamed(context, '/home'),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.notifications, color: AppColors.cardBackground), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Signed out successfully")),
+                );
+              }
+            },
+          ),
         ],
       ),
       body: GestureDetector(
@@ -109,10 +122,9 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
                 CategoriesInputField(
                   key: categoryPickerKey,
                   placeholder: 'Select the category',
-                  selectedCategory: viewModel.selectedCategory,
-                  onCategorySelected: viewModel.setCategory,
+                  apiUrl: 'https://fastapi-service-185169107324.us-central1.run.app/categories',
+                  onCategoryChanged: viewModel.setCategory,
                 ),
-
                 const SizedBox(height: 10),
                 const ExpenseLabel(text: "Amount"),
                 ExpenseInputField(

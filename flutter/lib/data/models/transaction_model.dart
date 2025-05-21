@@ -1,10 +1,29 @@
+import 'dart:convert';
+import 'package:hive/hive.dart';
+
+part 'transaction_model.g.dart';
+
+@HiveType(typeId: 0)  // Definimos un tipo para Hive
 class TransactionModel {
+  @HiveField(0)
   final String title;
+  
+  @HiveField(1)
   final String category;
+  
+  @HiveField(2)
   final String categoryType;
+  
+  @HiveField(3)
   final bool isExpense;
+  
+  @HiveField(4)
   final double amount;
+  
+  @HiveField(5)
   final String time;
+  
+  @HiveField(6)
   final String iconName;
 
   TransactionModel({
@@ -28,6 +47,9 @@ class TransactionModel {
         'iconName': iconName,
       };
 
+  /// Convertir el objeto a un String JSON para almacenamiento en caché
+  String toJsonString() => jsonEncode(toJson());
+
   /// Crear el objeto a partir de un mapa JSON
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     final category = json['category'] ?? {};
@@ -45,6 +67,12 @@ class TransactionModel {
       time: json['time'] ?? json['date'] ?? '',
       iconName: _guessIcon(category['name'] ?? 'Unknown'),
     );
+  }
+
+  /// Crear el objeto a partir de un String JSON
+  factory TransactionModel.fromJsonString(String jsonString) {
+    final Map<String, dynamic> json = jsonDecode(jsonString);
+    return TransactionModel.fromJson(json);
   }
 
   /// Adivinar el ícono según el nombre de la categoría

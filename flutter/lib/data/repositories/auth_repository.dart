@@ -14,7 +14,11 @@ class AuthRepository {
     fb.FirebaseAuth? firebaseAuth,
     String? baseUrl,
   })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-        _baseUrl = baseUrl ?? 'https://fastapi-service-185169107324.us-central1.run.app/auth';
+
+
+        _baseUrl = baseUrl ??
+            'https://fastapi-service-185169107324.us-central1.run.app/auth';
+
 
   /// Sign in with Firebase, exchange token with backend, cache token, and return User.
   Future<User?> signIn(String email, String password) async {

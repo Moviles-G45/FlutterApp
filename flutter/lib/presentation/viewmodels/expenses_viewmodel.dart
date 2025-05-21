@@ -31,7 +31,7 @@ class ExpensesViewModel extends ChangeNotifier {
           (b) => b.categoryType == 'SAVINGS',
           orElse: () => BudgetModel(categoryType: 'savings', percentage: 0));
 
-      
+      // Asignación de valores desde el modelo
       savings = balance.savingsSpent;
       needs = balance.needsSpent;
       wants = balance.wantsSpent;
@@ -41,14 +41,12 @@ class ExpensesViewModel extends ChangeNotifier {
             'CategoryType: ${budget.categoryType}, Percentage: ${budget.percentage}');
       }
       print(savings);
-
+      // Cálculo de meta de ahorro
       savingsBudget = (savingsBudgetItem.percentage / 100) * earnings;
      
       savingsProgress =
           savingsBudget > 0 ? (savings / savingsBudget).clamp(0.0, 1.0) : 0.0;
-
           print(savingsProgress);
-
     } catch (e) {
       print("Error fetching expenses: $e");
     } finally {
