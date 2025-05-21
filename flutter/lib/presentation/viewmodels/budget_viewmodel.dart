@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:finances/services/api_service.dart';
 import 'package:finances/services/auth_service.dart';
@@ -17,7 +19,7 @@ class BudgetViewModel extends ChangeNotifier {
 
   bool get isOffline => _isOffline;
 
-  /// Actualizar el estado de conexión a internet
+  /// ✅ Verificación de conectividad
   Future<bool> _checkConnection() async {
     final result = await Connectivity().checkConnectivity();
     _isOffline = result == ConnectivityResult.none;
@@ -40,7 +42,7 @@ class BudgetViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 🌟 Guardar el presupuesto en SharedPreferences
+  /// 💾 Guardar presupuesto local
   Future<void> _saveBudgetToPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('needs', displayNeeds);
@@ -49,46 +51,41 @@ class BudgetViewModel extends ChangeNotifier {
     print("✅ Presupuesto guardado en SharedPreferences.");
   }
 
-  /// 🌟 Cargar el presupuesto desde SharedPreferences
+  /// 📂 Cargar presupuesto local
   Future<void> _loadBudgetFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     displayNeeds = prefs.getDouble('needs') ?? 50;
     displayWants = prefs.getDouble('wants') ?? 30;
     displaySavings = prefs.getDouble('savings') ?? 20;
     hasBudget = true;
-    print("📂 Presupuesto cargado desde SharedPreferences: Needs: $displayNeeds%, Wants: $displayWants%, Savings: $displaySavings%");
+    print("📂 Presupuesto cargado desde SharedPreferences.");
     notifyListeners();
   }
 
-  /// 🌐 Verificar presupuesto existente desde la API
+  /// 🔍 Verificar presupuesto actual
   Future<void> checkExistingBudget() async {
     isLoading = true;
     await Future.delayed(Duration.zero);
     notifyListeners();
     try {
       _isOffline = !await _checkConnection();
-      print(_isOffline ? "📴 No internet. Loading from cache..." : "🌐 Internet available. Fetching from API...");
 
       if (_isOffline) {
-        print("📂 Modo offline: Cargando presupuesto desde SharedPreferences.");
         await _loadBudgetFromPreferences();
         return;
       }
 
       final now = DateTime.now();
       final budget = await ApiService().getBudget(now.year, now.month);
+
       if (budget.isNotEmpty) {
         hasBudget = true;
         displayNeeds = double.tryParse(budget[0]['percentage'].toString()) ?? 0.0;
         displayWants = double.tryParse(budget[1]['percentage'].toString()) ?? 0.0;
         displaySavings = double.tryParse(budget[2]['percentage'].toString()) ?? 0.0;
-        print("✅ Presupuesto obtenido desde API: Needs: $displayNeeds%, Wants: $displayWants%, Savings: $displaySavings%");
-
-        // Guardar en SharedPreferences
         await _saveBudgetToPreferences();
       } else {
         hasBudget = false;
-        print("❌ No hay presupuesto para el mes actual.");
       }
     } catch (e) {
       print("❌ Error al verificar presupuesto: $e");
@@ -99,7 +96,36 @@ class BudgetViewModel extends ChangeNotifier {
     }
   }
 
-  /// 🌐 Guardar o actualizar el presupuesto en la API
+  ///  Validar que suma == 100%
+  Future<bool> _validatePercentages() async {
+    return Future.delayed(const Duration(milliseconds: 100), () {
+      final total = needs + wants + savings;
+      print("🔢 Suma de porcentajes: $total");
+      return total == 100;
+    });
+  }
+
+  ///  Llamada desde un isolate
+  static Future<void> _apiCallInIsolate(Map<String, dynamic> args) async {
+    final SendPort sendPort = args['sendPort'];
+    final bool hasBudget = args['hasBudget'];
+    final String token = args['token'];
+    final Map<String, dynamic> body = args['body'];
+
+    try {
+      if (hasBudget) {
+        await ApiService().updateBudget(token: token, body: body);
+      } else {
+        await ApiService().postBudget(token: token, body: body);
+      }
+      sendPort.send(true);
+    } catch (e) {
+      print("❌ Error en isolate: $e");
+      sendPort.send(false);
+    }
+  }
+
+
   Future<bool> saveOrUpdateBudget() async {
     isLoading = true;
     notifyListeners();
@@ -107,6 +133,9 @@ class BudgetViewModel extends ChangeNotifier {
     try {
       _isOffline = !await _checkConnection();
       if (_isOffline) throw Exception("No internet connection.");
+
+      final isValid = await _validatePercentages();
+      if (!isValid) throw Exception("La suma debe ser 100%");
 
       final token = await AuthService().getIdToken();
       final now = DateTime.now();
@@ -121,24 +150,28 @@ class BudgetViewModel extends ChangeNotifier {
         ]
       };
 
-      if (hasBudget) {
-        await ApiService().updateBudget(token: token!, body: body);
+      // 🧵 Ejecutar en isolate
+      final receivePort = ReceivePort();
+      await Isolate.spawn(_apiCallInIsolate, {
+        'sendPort': receivePort.sendPort,
+        'hasBudget': hasBudget,
+        'token': token!,
+        'body': body,
+      });
+
+      final result = await receivePort.first as bool;
+      if (result) {
+        displayNeeds = needs;
+        displayWants = wants;
+        displaySavings = savings;
+        await _saveBudgetToPreferences();
+        print("✅ Presupuesto guardado/actualizado correctamente.");
+        return true;
       } else {
-        await ApiService().postBudget(token: token!, body: body);
+        throw Exception("Falló la operación en el isolate.");
       }
-
-      // Actualizar valores en la vista después de guardar
-      displayNeeds = needs;
-      displayWants = wants;
-      displaySavings = savings;
-
-      // Guardar en SharedPreferences
-      await _saveBudgetToPreferences();
-
-      print("✅ Presupuesto guardado/actualizado correctamente.");
-      return true;
     } catch (e) {
-      debugPrint("❌ Error saving or updating budget: $e");
+      debugPrint("❌ Error saving/updating budget: $e");
       return false;
     } finally {
       isLoading = false;

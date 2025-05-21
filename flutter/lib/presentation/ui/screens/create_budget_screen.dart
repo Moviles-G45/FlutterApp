@@ -15,7 +15,6 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
   @override
   void initState() {
     super.initState();
-    // Verificar si ya existe un presupuesto al cargar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vm = Provider.of<BudgetViewModel>(context, listen: false);
       vm.checkExistingBudget();
@@ -33,8 +32,7 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text("${value.toInt()}%", style: const TextStyle(fontSize: 16)),
           ],
         ),
@@ -55,8 +53,8 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: const Duration(seconds: 3),
         backgroundColor: color,
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -94,10 +92,7 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
                 const Center(
                   child: Text(
                     "Create or Update Monthly Budget",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -124,28 +119,16 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
                     Center(
                       child: Text(
                         vm.hasBudget
-                            ? "💡 Your actual budget for this month is: \n Needs: ${vm.displayNeeds}% \n Wants: ${vm.displayWants}% \n Savings: ${vm.displaySavings}%"
+                            ? "💡 Your actual budget for this month is:\nNeeds: ${vm.displayNeeds}%\nWants: ${vm.displayWants}%\nSavings: ${vm.displaySavings}%"
                             : "🚫 No budget for this month",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildSlider(
-                        label: "Needs",
-                        value: vm.needs,
-                        onChanged: vm.updateNeeds),
-                    _buildSlider(
-                        label: "Wants",
-                        value: vm.wants,
-                        onChanged: vm.updateWants),
-                    _buildSlider(
-                        label: "Savings",
-                        value: vm.savings,
-                        onChanged: vm.updateSavings),
+                    _buildSlider(label: "Needs", value: vm.needs, onChanged: vm.updateNeeds),
+                    _buildSlider(label: "Wants", value: vm.wants, onChanged: vm.updateWants),
+                    _buildSlider(label: "Savings", value: vm.savings, onChanged: vm.updateSavings),
                     const SizedBox(height: 32),
                     Center(
                       child: ElevatedButton(
@@ -157,11 +140,20 @@ class _CreateBudgetScreenState extends State<CreateBudgetScreen> {
                                   context,
                                   success
                                       ? "✅ Budget ${vm.hasBudget ? 'updated' : 'saved'} successfully!"
-                                      : "⚠️ Failed to save or update budget.",
+                                      : "⚠️ Percentages must add up to 100%",
                                   success ? Colors.green : Colors.red,
                                 );
                               },
-                        child: Text(vm.hasBudget ? "Update" : "Save"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: vm.isOffline ? Colors.grey : AppColors.darkBlue,
+                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: vm.isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(vm.hasBudget ? "Update" : "Save", style: const TextStyle(color: Colors.white)),
                       ),
                     ),
                   ],
