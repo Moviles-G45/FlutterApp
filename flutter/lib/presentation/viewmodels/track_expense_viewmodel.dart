@@ -50,7 +50,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
 
     if (!isOnline) {
       await _saveExpenseLocally(expense);
-      await notificationService.showLocalNotification("Sin conexión", "Tu transacción será enviada cuando recuperes internet.");
+      await notificationService.showLocalNotification("No conection", "Your transaction will be send when conection return");
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_disposed) resetFields();
       });
