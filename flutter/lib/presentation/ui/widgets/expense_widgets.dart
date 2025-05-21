@@ -1,16 +1,12 @@
 import 'package:finances/config/theme/colors.dart';
+import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-
-
-
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -37,6 +33,7 @@ class ExpenseDatePicker extends StatefulWidget {
   @override
   ExpenseDatePickerState createState() => ExpenseDatePickerState();
 }
+
 
 class ExpenseDatePickerState extends State<ExpenseDatePicker> {
   DateTime? selectedDate;
@@ -95,50 +92,66 @@ class ExpenseDatePickerState extends State<ExpenseDatePicker> {
 
 class CategoriesInputField extends StatefulWidget {
   final String placeholder;
-  final int? selectedCategory;
-  final void Function(int?) onCategorySelected;
+  final String apiUrl;
+  final ValueChanged<int?>? onCategoryChanged;
+  final Key? key;
 
   CategoriesInputField({
     required this.placeholder,
-    super.key,
-    required this.selectedCategory,
-    required this.onCategorySelected,
-  });
+    required this.apiUrl,
+    this.onCategoryChanged,
+    this.key,
+  }) : super(key: key);
 
   @override
   CategoriesInputFieldState createState() => CategoriesInputFieldState();
 }
 
 class CategoriesInputFieldState extends State<CategoriesInputField> {
-  Map<int, String> categories = {};
+  List<Map<String, dynamic>> categories = [];
+  Map<String, dynamic>? selectedCategory;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadCategories();
+    _fetchCategories();
   }
 
-  Future<void> _loadCategories() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? data = prefs.getString('cachedCategories');
-    if (data != null) {
-      final decoded = Map<String, dynamic>.from(json.decode(data));
-      setState(() {
-        categories = decoded.map((key, value) => MapEntry(int.parse(key), value));
-      });
+  Future<void> _fetchCategories() async {
+    try {
+      final response = await http.get(Uri.parse(widget.apiUrl));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          categories = data.map((category) => {
+                'id': category['id'],
+                'name': category['name'].toString()
+              }).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Error al cargar categorías');
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
     }
   }
 
+  //Función para resetear la categoría
   void resetCategory() {
-  widget.onCategorySelected(null); // Notificas al widget padre que la selección cambió
+    setState(() {
+      selectedCategory = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return 
-        DropdownButtonHideUnderline(
-            child: DropdownButtonFormField<int>(
-              value: widget.selectedCategory,
+    return isLoading
+        ? const CircularProgressIndicator()
+        : DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<Map<String, dynamic>>(
+              value: selectedCategory,
               decoration: InputDecoration(
                 hintText: widget.placeholder,
                 hintStyle: TextStyle(color: Colors.grey.shade600),
@@ -147,13 +160,18 @@ class CategoriesInputFieldState extends State<CategoriesInputField> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
               ),
               menuMaxHeight: 200, 
-              items: categories.entries
-              .map((entry) => DropdownMenuItem<int>(
-                    value: entry.key,
-                    child: Text(entry.value),
-                  ))
-              .toList(),
-              onChanged: widget.onCategorySelected,
+              items: categories.map((category) {
+                return DropdownMenuItem<Map<String, dynamic>>(
+                  value: category,
+                  child: Text(category['name'], style: TextStyle(color: Colors.grey.shade800)),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  selectedCategory = newValue;
+                });
+                widget.onCategoryChanged?.call(newValue?['id']);
+              },
             ),
           );
   }
@@ -173,7 +191,6 @@ class ExpenseInputField extends StatelessWidget {
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-        LengthLimitingTextInputFormatter(8)
       ],
       decoration: InputDecoration(
         hintText: placeholder,

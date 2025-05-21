@@ -9,7 +9,7 @@ import '../../services/notification_service.dart';
 
 class TrackExpenseViewModel extends ChangeNotifier {
   DateTime? selectedDate;
-  int? selectedCategory; // Renombrado para coincidir con CategoriesInputField
+  int? selectedCategoryId;
   final TextEditingController amountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
@@ -21,7 +21,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
   }
 
   void setCategory(int? id) {
-    selectedCategory = id;
+    selectedCategoryId = id;
     _safeNotifyListeners();
   }
 
@@ -29,12 +29,12 @@ class TrackExpenseViewModel extends ChangeNotifier {
     amountController.clear();
     descriptionController.clear();
     selectedDate = null;
-    selectedCategory = null;
+    selectedCategoryId = null;
     _safeNotifyListeners();
   }
 
   Future<String?> saveExpense({required NotificationService notificationService}) async {
-    if (selectedDate == null || selectedCategory == null || amountController.text.isEmpty || descriptionController.text.isEmpty) {
+    if (selectedDate == null || selectedCategoryId == null || amountController.text.isEmpty || descriptionController.text.isEmpty) {
       return "Por favor completa todos los campos";
     }
 
@@ -42,7 +42,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
       date: selectedDate!,
       amount: int.tryParse(amountController.text) ?? 0,
       description: descriptionController.text,
-      categoryId: selectedCategory!, // Renombrado
+      categoryId: selectedCategoryId!,
     );
 
     final connectivity = await Connectivity().checkConnectivity();
@@ -50,7 +50,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
 
     if (!isOnline) {
       await _saveExpenseLocally(expense);
-      await notificationService.showLocalNotification("No conection", "Your transaction will be send when conection return");
+      await notificationService.showLocalNotification("Sin conexión", "Tu transacción será enviada cuando recuperes internet.");
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_disposed) resetFields();
       });

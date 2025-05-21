@@ -1,10 +1,10 @@
 import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
-import 'package:finances/presentation/viewmodels/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:finances/data/repositories/map_repository.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import '../../../config/theme/colors.dart';
 
 class MapScreen extends StatefulWidget {
@@ -19,13 +19,13 @@ class _MapScreenState extends State<MapScreen> {
   String _selectedAtmName = '';
   String _selectedAtmAddress = '';
 
-  final MapRepository _mapRepository = MapRepository();
+  final String googleMapsApiKey = "AIzaSyARgei34VyOKClGROzUwe4bIwQDgIrKvi4";
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getUserLocation(); // Obtener ubicación 
+      _getUserLocation(); // Cargar ubicación solo después del primer frame
     });
   }
 
@@ -54,16 +54,29 @@ class _MapScreenState extends State<MapScreen> {
         _userLocation = LatLng(position.latitude, position.longitude);
       });
 
-      _mapController?.animateCamera(CameraUpdate.newLatLng(_userLocation));
+      if (_mapController != null) {
+        _mapController!.animateCamera(CameraUpdate.newLatLng(_userLocation));
+      }
 
-      final atmList = await _mapRepository.fetchNearbyATMs(
-        latitude: _userLocation.latitude,
-        longitude: _userLocation.longitude,
-      );
-
+      final atmList = await fetchNearbyATMs(_userLocation.latitude, _userLocation.longitude, 1);
       _updateAtmMarkers(atmList);
     } catch (e) {
       print("❌ Error al obtener ubicación: $e");
+    }
+  }
+
+  Future<List<dynamic>> fetchNearbyATMs(double lat, double lon, double radius) async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://fastapi-service-185169107324.us-central1.run.app/atms/nearby?lat=$lat&lon=$lon&radius=$radius'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Error al cargar cajeros');
+      }
+    } catch (e) {
+      print("❌ Error en fetchNearbyATMs: $e");
+      return [];
     }
   }
 
@@ -99,8 +112,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeVM = Provider.of<HomeViewModel>(context);
-    final isOffline = homeVM.isOffline;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mapa de Cajeros", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -119,24 +130,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: Column(
         children: [
-          if (isOffline)
-              Container(
-                color: Colors.orange,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-                child: Row(
-                  children: const [
-                    Icon(Icons.wifi_off, color: Colors.white),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        "You're offline. Showing last known data.",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           Expanded(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(target: _userLocation, zoom: 15),
@@ -196,4 +189,3 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 }
-
