@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-firebase-admin
-firebase
-python-dotenv
-pyjwt
-requests
