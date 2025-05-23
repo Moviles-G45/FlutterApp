@@ -1,3 +1,4 @@
+import 'package:finances/presentation/viewmodels/categories_viewmodel.dart';
 import 'package:finances/presentation/viewmodels/track_expense_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class AppProviders extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TransactionViewModel(financesRepository)),
         ChangeNotifierProvider(create: (_) => BudgetViewModel()),
         ChangeNotifierProvider(create: (_) => TrackExpenseViewModel()),
+        ChangeNotifierProvider(create: (_) => CategoriesViewModel())
       ],
       child: child,
     );

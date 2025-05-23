@@ -1,8 +1,10 @@
 import 'package:finances/presentation/ui/widgets/bottom_nav_bar.dart';
+import 'package:finances/presentation/viewmodels/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import '../../../config/theme/colors.dart';
@@ -112,6 +114,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeVM = Provider.of<HomeViewModel>(context);
+    final isOffline = homeVM.isOffline;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mapa de Cajeros", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -130,6 +134,24 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: Column(
         children: [
+          if (isOffline)
+              Container(
+                color: Colors.orange,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+                child: Row(
+                  children: const [
+                    Icon(Icons.wifi_off, color: Colors.white),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "You're offline. Showing last known data.",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           Expanded(
             child: GoogleMap(
               initialCameraPosition: CameraPosition(target: _userLocation, zoom: 15),

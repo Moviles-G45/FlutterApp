@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:finances/presentation/viewmodels/transaction_viewmodel.dart';
 import 'package:finances/services/notification_service.dart';
 import 'package:flutter/material.dart';

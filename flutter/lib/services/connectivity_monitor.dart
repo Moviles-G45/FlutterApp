@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:finances/services/pending_transaction_service.dart';
 
 class ConnectivityMonitor {
