@@ -11,6 +11,7 @@ class LoginViewModel extends ChangeNotifier {
 
   static const int _maxEmailLen = 50;
   static const int _maxPassLen = 20;
+  static const int _minPassLen = 6;
   final RegExp _emailRegex = RegExp(r'^[\w.-]+@([\w-]+\.)+[\w-]{2,6}$');
 
   LoginViewModel({AuthRepository? repository})
@@ -41,6 +42,11 @@ class LoginViewModel extends ChangeNotifier {
     if (password.length > _maxPassLen) {
       _showMessage(
           context, 'Password must be at most $_maxPassLen characters.');
+      return;
+    }
+    if (password.length < _minPassLen) {
+      _showMessage(
+          context, 'Password must be at least $_minPassLen characters.');
       return;
     }
 
