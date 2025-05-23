@@ -3,28 +3,28 @@ import 'package:http/http.dart' as http;
 import 'package:finances/services/auth_service.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.0.32:8000";
+  static const String baseUrl =
+      "https://fastapi-service-185169107324.us-central1.run.app";
 
   Future<String?> _getToken() async {
     return await AuthService().getIdToken();
   }
 
-Future<Map<String, dynamic>> getMonthlyBalance(int year, int month) async {
-  final token = await _getToken();
-  final url = Uri.parse('$baseUrl/transactions/balance/$year/$month');
+  Future<Map<String, dynamic>> getMonthlyBalance(int year, int month) async {
+    final token = await _getToken();
+    final url = Uri.parse('$baseUrl/transactions/balance/$year/$month');
 
-  final response = await http.get(url, headers: {
-    "Authorization": "Bearer $token",
-    "Content-Type": "application/json",
-  });
+    final response = await http.get(url, headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    });
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    throw Exception("Error al obtener el balance mensual");
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Error al obtener el balance mensual");
+    }
   }
-}
-
 
   Future<Map<String, dynamic>> getTotalSpent() async {
     final token = await _getToken();
@@ -42,27 +42,26 @@ Future<Map<String, dynamic>> getMonthlyBalance(int year, int month) async {
     }
   }
 
-Future<List<dynamic>> getTransactions(DateTime? start, DateTime? end) async {
-  final token = await _getToken();
-  final String startParam = start?.toIso8601String() ?? '';
-  final String endParam = end?.toIso8601String() ?? '';
+  Future<List<dynamic>> getTransactions(DateTime? start, DateTime? end) async {
+    final token = await _getToken();
+    final String startParam = start?.toIso8601String() ?? '';
+    final String endParam = end?.toIso8601String() ?? '';
 
-  final url = Uri.parse('$baseUrl/transactions?startDate=$startParam&endDate=$endParam');
-  print("GET: $url"); 
+    final url = Uri.parse(
+        '$baseUrl/transactions?startDate=$startParam&endDate=$endParam');
+    print("GET: $url");
 
-  final response = await http.get(url, headers: {
-    "Authorization": "Bearer $token",
-    "Content-Type": "application/json",
-  });
+    final response = await http.get(url, headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    });
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    throw Exception("Error al obtener transacciones");
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Error al obtener transacciones");
+    }
   }
-}
-
-
 
   Future<List<dynamic>> getBudget(int year, int month) async {
     final token = await _getToken();
@@ -79,25 +78,73 @@ Future<List<dynamic>> getTransactions(DateTime? start, DateTime? end) async {
       throw Exception("Error al obtener presupuesto");
     }
   }
-Future<void> postBudget({
-  required String token,
-  required Map<String, dynamic> body,
-}) async {
-  final url = Uri.parse('$baseUrl/budget/');
 
-  final response = await http.post(
-    url,
-    headers: {
-      "Authorization": "Bearer $token",
-      "Content-Type": "application/json",
-    },
-    body: jsonEncode(body),
-  );
+  Future<void> postBudget({
+    required String token,
+    required Map<String, dynamic> body,
+  }) async {
+    final url = Uri.parse('$baseUrl/budget/');
 
-  if (response.statusCode != 200) {
-    throw Exception("Error al guardar presupuesto: ${response.body}");
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error al guardar presupuesto: ${response.body}");
+    }
   }
-}
+    Future<void> updateBudget({
+    required String token,
+    required Map<String, dynamic> body,
+  }) async {
+    final url = Uri.parse('$baseUrl/budget/');
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error al guardar presupuesto: ${response.body}");
+    }
+  }
 
 
+
+  // Future<void> updateBudget(
+  //     {required String token, required Map<String, dynamic> body}) async {
+  //       print(body);
+  //   final url = Uri.parse('$baseUrl/budget');
+  //   final response = await http.post(
+  //     url,
+  //     headers: {
+  //        "Authorization": "Bearer $token",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: jsonEncode(body),
+  //   );
+
+  //   if (response.statusCode != 200) {
+  //     throw Exception("Error updating budget: ${response.body}");
+  //   }
+  // }
+
+  Future<bool> checkBudgetExists(int month, int year, String token) async {
+    try {
+      final value = await getBudget(month, year);
+      return value.isNotEmpty;
+    } catch (error) {
+      print("Error checking budget: $error");
+      return false;
+    }
+  }
 }

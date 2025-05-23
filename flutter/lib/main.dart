@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'firebase_options.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:provider/provider.dart';
 import 'config/theme/app_theme.dart';
 import 'presentation/ui/screens/create_budget_screen.dart';
 import 'presentation/ui/screens/launch_screen.dart';
@@ -17,12 +18,20 @@ import 'services/app_providers.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
+import 'data/models/transaction_model.dart';
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+ await Hive.initFlutter();
+  Hive.registerAdapter(TransactionModelAdapter()); // Registro del adaptador
+  await Hive.openBox<TransactionModel>('transactions'); // Asegúrate de abrir la caja como TransactionModel
 
   // Inicializa Firebase
   await Firebase.initializeApp(
@@ -38,7 +47,15 @@ void main() async {
 
   final initSettings = InitializationSettings(iOS: iosInit);
 
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
+      final String? payload = notificationResponse.payload;
+      if (payload != null) {
+        navigatorKey.currentState?.pushNamed(payload);
+      }
+    },
+  );
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
@@ -54,9 +71,7 @@ void main() async {
   );
   spendingReminderService.startMonitoring();
 
-
   // Inicia notificaciones basadas en ubicación
-
   final locationNotifier = LocationNotifierViewModel(
     locationService: locationService,
     notificationService: notificationService,
@@ -64,7 +79,10 @@ void main() async {
   locationNotifier.startMonitoring();
 
   // Corre la app
-  runApp(const MyApp());
+  runApp(Provider<NotificationService>.value(
+    value: notificationService,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -74,6 +92,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppProviders(
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         initialRoute: '/',
@@ -89,5 +108,19 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+/// Clase para manejar el ciclo de vida de la aplicación
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  final Future<void> Function()? detachedCallBack;
+
+  LifecycleEventHandler({this.detachedCallBack});
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      detachedCallBack?.call();
+    }
   }
 }

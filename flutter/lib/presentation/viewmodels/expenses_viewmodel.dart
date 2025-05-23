@@ -22,23 +22,31 @@ class ExpensesViewModel extends ChangeNotifier {
 
     try {
       final now = DateTime.now();
-      final BalanceModel balance = await _repository.fetchBalance(now.year, now.month);
-      final List<BudgetModel> budgetList = await _repository.fetchBudget(now.year, now.month);
+      final BalanceModel balance =
+          await _repository.fetchBalance(now.year, now.month);
+      final List<BudgetModel> budgetList =
+          await _repository.fetchBudget(now.year, now.month);
 
-      final savingsBudgetItem =
-          budgetList.firstWhere((b) => b.categoryType == 'savings', orElse: () => BudgetModel(categoryType: 'savings', percentage: 0));
+      final savingsBudgetItem = budgetList.firstWhere(
+          (b) => b.categoryType == 'SAVINGS',
+          orElse: () => BudgetModel(categoryType: 'savings', percentage: 0));
 
       // Asignación de valores desde el modelo
       savings = balance.savingsSpent;
       needs = balance.needsSpent;
       wants = balance.wantsSpent;
       earnings = balance.totalEarnings;
-
+      for (var budget in budgetList) {
+        print(
+            'CategoryType: ${budget.categoryType}, Percentage: ${budget.percentage}');
+      }
+      print(savings);
       // Cálculo de meta de ahorro
       savingsBudget = (savingsBudgetItem.percentage / 100) * earnings;
-      savingsProgress = savingsBudget > 0
-          ? (savings / savingsBudget).clamp(0.0, 1.0)
-          : 0.0;
+     
+      savingsProgress =
+          savingsBudget > 0 ? (savings / savingsBudget).clamp(0.0, 1.0) : 0.0;
+          print(savingsProgress);
     } catch (e) {
       print("Error fetching expenses: $e");
     } finally {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:finances/config/theme/colors.dart';
-
 import '../../../services/auth_service.dart';
 import '../../viewmodels/expenses_viewmodel.dart';
 import '../../viewmodels/home_viewmodel.dart';
@@ -11,6 +10,9 @@ import '../widgets_home/balance_card.dart';
 import '../widgets_home/expenses_card.dart';
 import '../widgets_home/transaction_filter_bar.dart';
 import '../widgets_home/transaction_list.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -19,19 +21,56 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<HomeViewModel>(context, listen: false).fetchBalance();
-      Provider.of<ExpensesViewModel>(context, listen: false).fetchExpenses();
 
-      final now = DateTime.now();
-      final start = DateTime(now.year, now.month, 1);
-      final end = DateTime(now.year, now.month + 1, 0);
-      Provider.of<TransactionViewModel>(context, listen: false).setDateRange(start, end);
-    });
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (!mounted) return;
+    
+    final homeVM = context.read<HomeViewModel>();
+    final expensesVM = context.read<ExpensesViewModel>();
+    final transactionVM = context.read<TransactionViewModel>();
+
+    
+
+    await Future.wait([
+      homeVM.fetchBalance(),
+      expensesVM.fetchExpenses(),
+      _fetchAndCacheCategories()
+    ]);
+
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, 1);
+    final end = DateTime(now.year, now.month + 1, 0);
+
+    transactionVM.setDateRange(start, end);
+  });
+}
+
+  Future<void> _fetchAndCacheCategories() async {
+    try {
+      final response = await http.get(Uri.parse('https://fastapi-service-185169107324.us-central1.run.app/categories'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> categories = json.decode(response.body);
+
+        // Guardar categorías como id => nombre
+        final Map<String, String> categoryMap = {
+          for (var cat in categories) cat['id'].toString(): cat['name']
+        };
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('cachedCategories', json.encode(categoryMap));
+      } else {
+        debugPrint("Error al obtener categorías: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error al cachear categorías: $e");
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
