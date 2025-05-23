@@ -1,3 +1,4 @@
+import 'package:finances/presentation/ui/screens/categories_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -105,6 +106,7 @@ class MyApp extends StatelessWidget {
           '/tracking': (context) => TrackExpenseScreen(),
           '/map': (context) => MapScreen(),
           '/budget': (context) => const CreateBudgetScreen(),
+          '/categories': (context) => CategoriesScreen(),
         },
       ),
     );
