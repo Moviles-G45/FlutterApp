@@ -11,6 +11,9 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final cateVM = Provider.of<CategoriesViewModel>(context);
+    final isOffline = cateVM.isOffline;
     return ChangeNotifierProvider(
       create: (_) => CategoriesViewModel(),
       child: Consumer<CategoriesViewModel>(
@@ -44,7 +47,9 @@ class CategoriesScreen extends StatelessWidget {
             body: SafeArea(
               child: Column(
                 children: [
-                  if (viewModel.isOffline)
+
+                  if (isOffline)
+
                     Container(
                       color: Colors.orange,
                       width: double.infinity,
