@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:finances/data/models/category_model.dart';
+import 'package:finances/services/connectivity_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,25 +18,35 @@ class CategoriesViewModel extends ChangeNotifier {
   }
 
   Future<void> loadCategories() async {
-    _isLoading = true;
-    notifyListeners();
+  _isLoading = true;
+  notifyListeners();
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final data = prefs.getString('cachedCategories');
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('cachedCategories');
 
-      if (data != null) {
-        final Map<String, dynamic> decoded = json.decode(data);
-        _categories = decoded.entries
-            .map((entry) => CategoryModel(id: int.parse(entry.key), name: entry.value))
-            .toList();
-      }
+    if (data != null) {
+      final Map<String, dynamic> decoded = json.decode(data);
+      _categories = decoded.entries
+          .map((entry) => CategoryModel(id: int.parse(entry.key), name: entry.value))
+          .toList();
+    }
     } catch (e) {
       _isOffline = true;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
+
+    // Verificamos si hay conexión después de cargar los datos locales
+    final hasInternet = await _checkConnection();
+    _isOffline = !hasInternet;
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+  Future<bool> _checkConnection() async {
+    final result = await ConnectivityService().hasConnection();
+    return result;
   }
 
   IconData getIconForCategory(String label) {
