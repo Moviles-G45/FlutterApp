@@ -4,7 +4,16 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String backendUrl = "https://fastapi-service-185169107324.us-central1.run.app/auth/login";
+  AuthService._();
+  static final AuthService instance = AuthService._();
+  final String backendUrl =
+      "https://fastapi-service-185169107324.us-central1.run.app/auth/login";
+  String? _token;
+
+  Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString("auth_token");
+  }
 
   Future<Map<String, dynamic>?> signIn(String email, String password) async {
     try {
@@ -27,6 +36,7 @@ class AuthService {
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString("auth_token", idToken);
+        _token = idToken;
 
         return data;
       } else {
@@ -45,14 +55,17 @@ class AuthService {
   }
 
   Future<String> getIdToken([bool forceRefresh = false]) async {
+    if (_token != null && !forceRefresh) {
+      return _token!;
+    }
     final User? user = FirebaseAuth.instance.currentUser;
-
     if (user != null) {
       try {
-        return await user.getIdToken(forceRefresh) ?? "";
+        final fresh = await user.getIdToken(forceRefresh) ?? "";
+        _token = fresh;
+        return fresh;
       } catch (e) {
         print("Error obteniendo el token: $e");
-        return "";
       }
     }
     return "";

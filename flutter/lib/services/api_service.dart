@@ -7,7 +7,7 @@ class ApiService {
       "https://fastapi-service-185169107324.us-central1.run.app";
 
   Future<String?> _getToken() async {
-    return await AuthService().getIdToken();
+    return await AuthService.instance.getIdToken();
   }
 
   Future<Map<String, dynamic>> getMonthlyBalance(int year, int month) async {

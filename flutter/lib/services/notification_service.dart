@@ -10,32 +10,31 @@ import 'api_service.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notifications;
-  
 
   NotificationService(this.notifications);
 
-  Future<void> showLocalNotification(String title, String message, {String? payload}) async {
-  const iosDetails = DarwinNotificationDetails(
-    presentAlert: true,
-    presentBadge: true,
-    presentSound: true,
-  );
+  Future<void> showLocalNotification(String title, String message,
+      {String? payload}) async {
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
-  const notificationDetails = NotificationDetails(iOS: iosDetails);
+    const notificationDetails = NotificationDetails(iOS: iosDetails);
 
-  await notifications.show(
-    1,
-    title,
-    message,
-    notificationDetails,
-    payload: payload, // Añadir el payload
-  );
-}
-
+    await notifications.show(
+      1,
+      title,
+      message,
+      notificationDetails,
+      payload: payload, // Añadir el payload
+    );
+  }
 
   Future<void> saveNotification(AppNotification notification) async {
     try {
-      final idToken = await AuthService().getIdToken();
+      final idToken = await AuthService.instance.getIdToken();
       final url = Uri.parse('${ApiService.baseUrl}/notifications');
 
       final response = await http.post(

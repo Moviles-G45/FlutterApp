@@ -25,7 +25,7 @@ class CategoriesScreen extends StatelessWidget {
                   icon:
                       const Icon(Icons.logout, color: AppColors.cardBackground),
                   onPressed: () async {
-                    await AuthService().signOut();
+                    await AuthService.instance.signOut();
                     if (context.mounted) {
                       Navigator.pushNamedAndRemoveUntil(
                         context,

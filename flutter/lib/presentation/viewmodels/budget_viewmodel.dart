@@ -80,9 +80,12 @@ class BudgetViewModel extends ChangeNotifier {
 
       if (budget.isNotEmpty) {
         hasBudget = true;
-        displayNeeds = double.tryParse(budget[0]['percentage'].toString()) ?? 0.0;
-        displayWants = double.tryParse(budget[1]['percentage'].toString()) ?? 0.0;
-        displaySavings = double.tryParse(budget[2]['percentage'].toString()) ?? 0.0;
+        displayNeeds =
+            double.tryParse(budget[0]['percentage'].toString()) ?? 0.0;
+        displayWants =
+            double.tryParse(budget[1]['percentage'].toString()) ?? 0.0;
+        displaySavings =
+            double.tryParse(budget[2]['percentage'].toString()) ?? 0.0;
         await _saveBudgetToPreferences();
       } else {
         hasBudget = false;
@@ -125,7 +128,6 @@ class BudgetViewModel extends ChangeNotifier {
     }
   }
 
-
   Future<bool> saveOrUpdateBudget() async {
     isLoading = true;
     notifyListeners();
@@ -137,7 +139,7 @@ class BudgetViewModel extends ChangeNotifier {
       final isValid = await _validatePercentages();
       if (!isValid) throw Exception("La suma debe ser 100%");
 
-      final token = await AuthService().getIdToken();
+      final token = await AuthService.instance.getIdToken();
       final now = DateTime.now();
 
       final body = {
