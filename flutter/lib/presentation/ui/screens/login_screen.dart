@@ -9,7 +9,9 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   Future<void> _checkAndPerform(
-      BuildContext context, VoidCallback action) async {
+    BuildContext context,
+    VoidCallback action,
+  ) async {
     ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
 
     final result = await Connectivity().checkConnectivity();
@@ -63,6 +65,8 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
