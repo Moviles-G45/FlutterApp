@@ -33,8 +33,12 @@ class TrackExpenseViewModel extends ChangeNotifier {
     _safeNotifyListeners();
   }
 
-  Future<String?> saveExpense({required NotificationService notificationService}) async {
-    if (selectedDate == null || selectedCategory == null || amountController.text.isEmpty || descriptionController.text.isEmpty) {
+  Future<String?> saveExpense(
+      {required NotificationService notificationService}) async {
+    if (selectedDate == null ||
+        selectedCategory == null ||
+        amountController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
       return "Por favor completa todos los campos";
     }
 
@@ -50,7 +54,8 @@ class TrackExpenseViewModel extends ChangeNotifier {
 
     if (!isOnline) {
       await _saveExpenseLocally(expense);
-      await notificationService.showLocalNotification("No conection", "Your transaction will be send when conection return");
+      await notificationService.showLocalNotification("No conection",
+          "Your transaction will be send when conection return");
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_disposed) resetFields();
       });
@@ -74,12 +79,13 @@ class TrackExpenseViewModel extends ChangeNotifier {
   }
 
   Future<String?> _sendExpenseOnline(TrackExpense expense) async {
-    final idToken = await AuthService().getIdToken();
+    final idToken = await AuthService.instance.getIdToken();
     if (idToken == null) {
       return "Error de autenticación.";
     }
 
-    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/transactions");
+    final url = Uri.parse(
+        "https://fastapi-service-185169107324.us-central1.run.app/transactions");
 
     try {
       final response = await http.post(

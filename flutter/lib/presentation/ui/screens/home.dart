@@ -13,6 +13,7 @@ import '../widgets_home/transaction_list.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -21,36 +22,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
 
-@override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    if (!mounted) return;
-    
-    final homeVM = context.read<HomeViewModel>();
-    final expensesVM = context.read<ExpensesViewModel>();
-    final transactionVM = context.read<TransactionViewModel>();
+      final homeVM = context.read<HomeViewModel>();
+      final expensesVM = context.read<ExpensesViewModel>();
+      final transactionVM = context.read<TransactionViewModel>();
 
-    
+      await Future.wait([
+        homeVM.fetchBalance(),
+        expensesVM.fetchExpenses(),
+        _fetchAndCacheCategories()
+      ]);
 
-    await Future.wait([
-      homeVM.fetchBalance(),
-      expensesVM.fetchExpenses(),
-      _fetchAndCacheCategories()
-    ]);
+      final now = DateTime.now();
+      final start = DateTime(now.year, now.month, 1);
+      final end = DateTime(now.year, now.month + 1, 0);
 
-    final now = DateTime.now();
-    final start = DateTime(now.year, now.month, 1);
-    final end = DateTime(now.year, now.month + 1, 0);
-
-    transactionVM.setDateRange(start, end);
-  });
-}
+      transactionVM.setDateRange(start, end);
+    });
+  }
 
   Future<void> _fetchAndCacheCategories() async {
     try {
-      final response = await http.get(Uri.parse('https://fastapi-service-185169107324.us-central1.run.app/categories'));
+      final response = await http.get(Uri.parse(
+          'https://fastapi-service-185169107324.us-central1.run.app/categories'));
 
       if (response.statusCode == 200) {
         final List<dynamic> categories = json.decode(response.body);
@@ -70,11 +69,10 @@ void initState() {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     final homeVM = Provider.of<HomeViewModel>(context);
     final isOffline = homeVM.isOffline;
 
@@ -87,9 +85,10 @@ void initState() {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
-              await AuthService().signOut();
+              await AuthService.instance.signOut();
               if (context.mounted) {
-                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login', (route) => false);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Signed out successfully")),
                 );
@@ -105,7 +104,8 @@ void initState() {
               Container(
                 color: Colors.orange,
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
                 child: Row(
                   children: const [
                     Icon(Icons.wifi_off, color: Colors.white),

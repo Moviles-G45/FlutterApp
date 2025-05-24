@@ -1,4 +1,5 @@
 import 'package:finances/presentation/ui/screens/categories_screen.dart';
+import 'package:finances/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -29,6 +30,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await AuthService.instance.init();
 
   await Hive.initFlutter();
   Hive.registerAdapter(TransactionModelAdapter()); // Registro del adaptador
