@@ -11,41 +11,52 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final cateVM = Provider.of<CategoriesViewModel>(context);
     final isOffline = cateVM.isOffline;
-
     return ChangeNotifierProvider(
       create: (_) => CategoriesViewModel(),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.background,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout, color: AppColors.cardBackground),
-              onPressed: () async {
-                await AuthService().signOut();
-                if (context.mounted) {
-                  Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Signed out successfully")),
-                  );
-                }
-              },
+      child: Consumer<CategoriesViewModel>(
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              backgroundColor: AppColors.background,
+              elevation: 0,
+              actions: [
+                IconButton(
+                  icon:
+                      const Icon(Icons.logout, color: AppColors.cardBackground),
+                  onPressed: () async {
+                    await AuthService().signOut();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        (route) => false,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Signed out successfully")),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        body: SafeArea(
-          child: Consumer<CategoriesViewModel>(
-            builder: (context, viewModel, child) {
-              return Column(
+            body: SafeArea(
+              child: Column(
                 children: [
+
                   if (isOffline)
+
                     Container(
                       color: Colors.orange,
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 9,
+                        horizontal: 16,
+                      ),
                       child: Row(
                         children: const [
                           Icon(Icons.wifi_off, color: AppColors.cardBackground),
@@ -74,23 +85,37 @@ class CategoriesScreen extends StatelessWidget {
                           : GridView.builder(
                               padding: const EdgeInsets.all(20),
                               itemCount: viewModel.categories.length,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 20,
                                 mainAxisSpacing: 20,
                               ),
                               itemBuilder: (context, index) {
                                 final category = viewModel.categories[index];
-                                final icon = viewModel.getIconForCategory(category.name);
+                                final icon = viewModel.getIconForCategory(
+                                  category.name,
+                                );
                                 return ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/category-transactions',
+                                      arguments: {
+                                        'id': category.id,
+                                        'name': category.name,
+                                      },
+                                    );
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.textSecondary,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     elevation: 3,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -116,11 +141,11 @@ class CategoriesScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              );
-            },
-          ),
-        ),
-        bottomNavigationBar: BottomNavBar(),
+              ),
+            ),
+            bottomNavigationBar: BottomNavBar(),
+          );
+        },
       ),
     );
   }

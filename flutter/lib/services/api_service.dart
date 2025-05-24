@@ -79,6 +79,38 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> getTransactionsByCategory({
+    DateTime? start,
+    DateTime? end,
+    int? categoryId,
+  }) async {
+    final token = await _getToken();
+    final String startParam = start?.toIso8601String() ?? '';
+    final String endParam = end?.toIso8601String() ?? '';
+    final String categoryParam =
+        categoryId != null ? '&category=$categoryId' : '';
+
+    final url = Uri.parse(
+      '$baseUrl/transactions?startDate=$startParam&endDate=$endParam$categoryParam',
+    );
+    print("GET: $url");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error al obtener transacciones (${response.statusCode})");
+    }
+  }
+
   Future<void> postBudget({
     required String token,
     required Map<String, dynamic> body,
@@ -98,7 +130,8 @@ class ApiService {
       throw Exception("Error al guardar presupuesto: ${response.body}");
     }
   }
-    Future<void> updateBudget({
+
+  Future<void> updateBudget({
     required String token,
     required Map<String, dynamic> body,
   }) async {
@@ -117,8 +150,6 @@ class ApiService {
       throw Exception("Error al guardar presupuesto: ${response.body}");
     }
   }
-
-
 
   // Future<void> updateBudget(
   //     {required String token, required Map<String, dynamic> body}) async {

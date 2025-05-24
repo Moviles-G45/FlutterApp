@@ -15,12 +15,12 @@ import 'presentation/ui/screens/home.dart';
 import 'presentation/ui/screens/track_expense_screen.dart';
 import 'presentation/ui/screens/map_screen.dart';
 import 'presentation/viewmodels/location_notifier_viewmodel.dart';
+import 'presentation/ui/screens/category_transaction_screen.dart';
 import 'services/app_providers.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/spending_reminder_service.dart';
 import 'data/models/transaction_model.dart';
-
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -30,9 +30,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
- await Hive.initFlutter();
+  await Hive.initFlutter();
   Hive.registerAdapter(TransactionModelAdapter()); // Registro del adaptador
-  await Hive.openBox<TransactionModel>('transactions'); // Asegúrate de abrir la caja como TransactionModel
+  await Hive.openBox<TransactionModel>(
+      'transactions'); // Asegúrate de abrir la caja como TransactionModel
 
   // Inicializa Firebase
   await Firebase.initializeApp(
@@ -50,7 +51,8 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(
     initSettings,
-    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
+    onDidReceiveNotificationResponse:
+        (NotificationResponse notificationResponse) async {
       final String? payload = notificationResponse.payload;
       if (payload != null) {
         navigatorKey.currentState?.pushNamed(payload);
@@ -59,11 +61,13 @@ void main() async {
   );
 
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
       ?.requestPermissions(alert: true, badge: true, sound: true);
 
   // Instancia servicios
-  final notificationService = NotificationService(flutterLocalNotificationsPlugin);
+  final notificationService =
+      NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
 
   // Inicia recordatorios de gasto de fin de semana
@@ -107,6 +111,14 @@ class MyApp extends StatelessWidget {
           '/map': (context) => MapScreen(),
           '/budget': (context) => const CreateBudgetScreen(),
           '/categories': (context) => CategoriesScreen(),
+          '/category-transactions': (c) {
+            final args =
+                ModalRoute.of(c)!.settings.arguments as Map<String, dynamic>;
+            return CategoryTransactionsScreen(
+              categoryId: args['id'] as int,
+              categoryName: args['name'] as String,
+            );
+          },
         },
       ),
     );
