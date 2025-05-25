@@ -32,42 +32,37 @@ class _CategoriesScreenContent extends StatelessWidget {
           backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.background,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout, color: AppColors.cardBackground),
-                onPressed: () async {
-                  await AuthService.instance.signOut();
-                  if (context.mounted) {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/login',
-                      (route) => false,
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Signed out successfully")),
-                    );
-                  }
+            appBar: AppBar(
+              backgroundColor: AppColors.background,
+              elevation: 0,
+              leading: BackButton(
+                color: AppColors.cardBackground,
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
                 },
               ),
-            ],
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                if (isOffline)
-                  Container(
-                    color: Colors.orange,
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.wifi_off, color: Colors.white),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "You're offline. Showing last known data.",
-                            style: TextStyle(color: Colors.white),
+              actions: [],
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  if (viewModel.isOffline)
+                    Container(
+                      color: Colors.orange,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 9,
+                        horizontal: 16,
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.wifi_off, color: AppColors.cardBackground),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "You're offline. Showing last known data.",
+                              style: TextStyle(color: AppColors.cardBackground),
+                            ),
                           ),
                         ),
                       ],
@@ -82,42 +77,40 @@ class _CategoriesScreenContent extends StatelessWidget {
                         topLeft: Radius.circular(50),
                         topRight: Radius.circular(50),
                       ),
-                    ),
-                    child: viewModel.isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : GridView.builder(
-                            padding: const EdgeInsets.all(20),
-                            itemCount: viewModel.categories.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 20,
-                              mainAxisSpacing: 20,
-                            ),
-                            itemBuilder: (context, index) {
-                              final category = viewModel.categories[index];
-                              final icon = viewModel.getIconForCategory(
-                                category.name,
-                              );
-                              return ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/category-transactions',
-                                    arguments: {
-                                      'id': category.id,
-                                      'name': category.name,
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.textSecondary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  elevation: 3,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
+                      child: viewModel.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : GridView.builder(
+                              padding: const EdgeInsets.all(20),
+                              itemCount: viewModel.categories.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                              ),
+                              itemBuilder: (context, index) {
+                                final category = viewModel.categories[index];
+                                final icon =
+                                    viewModel.getIconForCategory(category.name);
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/category-transactions',
+                                      arguments: {
+                                        'id': category.id,
+                                        'name': category.name,
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.textSecondary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    elevation: 3,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                   ),
                                 ),
                                 child: Column(
