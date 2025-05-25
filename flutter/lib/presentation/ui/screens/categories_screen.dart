@@ -1,8 +1,8 @@
+import 'package:finances/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../config/theme/colors.dart';
-import '../../../services/auth_service.dart';
 import '../../ui/widgets/bottom_nav_bar.dart';
 import '../../ui/widgets_home/balance_card.dart';
 import '../../viewmodels/categories_viewmodel.dart';
@@ -14,44 +14,10 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CategoriesViewModel(),
-
       child: const _CategoriesScreenContent(),
     );
   }
 }
-
-      child: Consumer<CategoriesViewModel>(
-        builder: (context, viewModel, child) {
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            appBar: AppBar(
-              backgroundColor: AppColors.background,
-              elevation: 0,
-              actions: [
-                IconButton(
-                  icon:
-                      const Icon(Icons.logout, color: AppColors.cardBackground),
-                  onPressed: () async {
-                    await AuthService.instance.signOut();
-                    if (context.mounted) {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/login',
-                        (route) => false,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Signed out successfully")),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: Column(
-                children: [
-
 
 class _CategoriesScreenContent extends StatelessWidget {
   const _CategoriesScreenContent({Key? key}) : super(key: key);
@@ -71,7 +37,7 @@ class _CategoriesScreenContent extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.logout, color: AppColors.cardBackground),
                 onPressed: () async {
-                  await AuthService().signOut();
+                  await AuthService.instance.signOut();
                   if (context.mounted) {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
