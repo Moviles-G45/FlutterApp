@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:finances/services/auth_service.dart';
 
 class PendingTransactionService {
-  static final PendingTransactionService _instance = PendingTransactionService._internal();
+  static final PendingTransactionService _instance =
+      PendingTransactionService._internal();
   factory PendingTransactionService() => _instance;
   PendingTransactionService._internal();
 
@@ -14,10 +15,11 @@ class PendingTransactionService {
 
     if (cached.isEmpty) return;
 
-    final idToken = await AuthService().getIdToken();
+    final idToken = await AuthService.instance.getIdToken();
     if (idToken == null) return;
 
-    final url = Uri.parse("https://fastapi-service-185169107324.us-central1.run.app/transactions");
+    final url = Uri.parse(
+        "https://fastapi-service-185169107324.us-central1.run.app/transactions");
 
     List<String> stillPending = [];
 

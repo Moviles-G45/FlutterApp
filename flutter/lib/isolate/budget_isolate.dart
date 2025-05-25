@@ -7,12 +7,13 @@ class BudgetIsolateRequest {
   final bool isUpdate;
   final SendPort sendPort;
 
-  BudgetIsolateRequest({required this.body, required this.isUpdate, required this.sendPort});
+  BudgetIsolateRequest(
+      {required this.body, required this.isUpdate, required this.sendPort});
 }
 
 void budgetApiIsolate(BudgetIsolateRequest request) async {
   try {
-    final token = await AuthService().getIdToken();
+    final token = await AuthService.instance.getIdToken();
     if (request.isUpdate) {
       await ApiService().updateBudget(token: token!, body: request.body);
     } else {

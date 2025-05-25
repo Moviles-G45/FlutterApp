@@ -14,10 +14,44 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CategoriesViewModel(),
+
       child: const _CategoriesScreenContent(),
     );
   }
 }
+
+      child: Consumer<CategoriesViewModel>(
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              backgroundColor: AppColors.background,
+              elevation: 0,
+              actions: [
+                IconButton(
+                  icon:
+                      const Icon(Icons.logout, color: AppColors.cardBackground),
+                  onPressed: () async {
+                    await AuthService.instance.signOut();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        (route) => false,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Signed out successfully")),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+
 
 class _CategoriesScreenContent extends StatelessWidget {
   const _CategoriesScreenContent({Key? key}) : super(key: key);
