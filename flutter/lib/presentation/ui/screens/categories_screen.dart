@@ -1,20 +1,36 @@
-import 'package:finances/presentation/viewmodels/categories_viewmodel.dart';
+import 'package:finances/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../config/theme/colors.dart';
 import '../../ui/widgets/bottom_nav_bar.dart';
 import '../../ui/widgets_home/balance_card.dart';
+import '../../viewmodels/categories_viewmodel.dart';
 
 class CategoriesScreen extends StatelessWidget {
-  const CategoriesScreen({super.key});
+  const CategoriesScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CategoriesViewModel(),
-      child: Consumer<CategoriesViewModel>(
-        builder: (context, viewModel, child) {
-          return Scaffold(
+      child: const _CategoriesScreenContent(),
+    );
+  }
+}
+
+class _CategoriesScreenContent extends StatelessWidget {
+  const _CategoriesScreenContent({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CategoriesViewModel>(
+      builder: (context, viewModel, child) {
+        final isOffline = viewModel.isOffline;
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
             backgroundColor: AppColors.background,
             appBar: AppBar(
               backgroundColor: AppColors.background,
@@ -48,18 +64,18 @@ class CategoriesScreen extends StatelessWidget {
                               style: TextStyle(color: AppColors.cardBackground),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  BalanceCard(),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBackground,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50),
                         ),
+                      ],
+                    ),
+                  ),
+                 BalanceCard(),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
                       ),
                       child: viewModel.isLoading
                           ? const Center(child: CircularProgressIndicator())
@@ -96,36 +112,36 @@ class CategoriesScreen extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        icon,
-                                        size: 30,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      icon,
+                                      size: 30,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      category.name,
+                                      style: const TextStyle(
+                                        fontSize: 14,
                                         color: AppColors.textPrimary,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        category.name,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            bottomNavigationBar: BottomNavBar(),
-          );
-        },
-      ),
+          ),
+          bottomNavigationBar: BottomNavBar(),
+        );
+      },
     );
   }
 }

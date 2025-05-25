@@ -18,8 +18,7 @@ class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
   LatLng _userLocation = const LatLng(4.701378155722595, -74.03523435630727);
   Set<Marker> _markers = {};
-  String _selectedAtmName = '';
-  String _selectedAtmAddress = '';
+  Map<String, dynamic>? _selectedAtm;
 
   final String googleMapsApiKey = "AIzaSyARgei34VyOKClGROzUwe4bIwQDgIrKvi4";
 
@@ -95,10 +94,9 @@ class _MapScreenState extends State<MapScreen> {
           snippet: atm['direccion'],
         ),
         onTap: () {
-          if (mounted) {
+          if (mounted && _selectedAtm != atm) {
             setState(() {
-              _selectedAtmName = atm['nombre'];
-              _selectedAtmAddress = atm['direccion'];
+              _selectedAtm = atm;
             });
           }
         },
@@ -145,7 +143,7 @@ class _MapScreenState extends State<MapScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "You're offline. Showing last known data.",
+                        "You're offline. Can´t show nearby ATMs",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -163,7 +161,7 @@ class _MapScreenState extends State<MapScreen> {
               myLocationButtonEnabled: true,
             ),
           ),
-          if (_selectedAtmName.isNotEmpty)
+          if (_selectedAtm != null)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -191,8 +189,8 @@ class _MapScreenState extends State<MapScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text("Cajero", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text(_selectedAtmName, style: const TextStyle(color: AppColors.strongGreen, fontSize: 14)),
-                        Text(_selectedAtmAddress, style: const TextStyle(color: Colors.black87, fontSize: 14)),
+                        Text(_selectedAtm!['nombre'], style: const TextStyle(color: AppColors.strongGreen, fontSize: 14)),
+                        Text(_selectedAtm!['direccion'], style: const TextStyle(color: Colors.black87, fontSize: 14)),
                       ],
                     ),
                   ),
