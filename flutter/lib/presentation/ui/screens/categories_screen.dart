@@ -2,7 +2,6 @@ import 'package:finances/presentation/viewmodels/categories_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../config/theme/colors.dart';
-import '../../../services/auth_service.dart';
 import '../../ui/widgets/bottom_nav_bar.dart';
 import '../../ui/widgets_home/balance_card.dart';
 
@@ -20,26 +19,13 @@ class CategoriesScreen extends StatelessWidget {
             appBar: AppBar(
               backgroundColor: AppColors.background,
               elevation: 0,
-              actions: [
-                IconButton(
-                  icon:
-                      const Icon(Icons.logout, color: AppColors.cardBackground),
-                  onPressed: () async {
-                    await AuthService.instance.signOut();
-                    if (context.mounted) {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/login',
-                        (route) => false,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Signed out successfully")),
-                      );
-                    }
-                  },
-                ),
-              ],
+              leading: BackButton(
+                color: AppColors.cardBackground,
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
+              ),
+              actions: [],
             ),
             body: SafeArea(
               child: Column(
@@ -88,9 +74,8 @@ class CategoriesScreen extends StatelessWidget {
                               ),
                               itemBuilder: (context, index) {
                                 final category = viewModel.categories[index];
-                                final icon = viewModel.getIconForCategory(
-                                  category.name,
-                                );
+                                final icon =
+                                    viewModel.getIconForCategory(category.name);
                                 return ElevatedButton(
                                   onPressed: () {
                                     Navigator.pushNamed(
@@ -109,8 +94,7 @@ class CategoriesScreen extends StatelessWidget {
                                     ),
                                     elevation: 3,
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
+                                        vertical: 16),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
