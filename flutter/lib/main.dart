@@ -1,5 +1,6 @@
 import 'package:finances/presentation/ui/screens/categories_screen.dart';
 import 'package:finances/services/auth_service.dart';
+import 'package:finances/services/connectivity_monitor.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -72,6 +73,8 @@ void main() async {
   final notificationService =
       NotificationService(flutterLocalNotificationsPlugin);
   final locationService = LocationService();
+
+  ConnectivityMonitor().startMonitoring();
 
   // Inicia recordatorios de gasto de fin de semana
   final spendingReminderService = SpendingReminderService(
