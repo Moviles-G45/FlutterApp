@@ -32,14 +32,10 @@ class TrackExpenseViewModel extends ChangeNotifier {
     selectedCategory = null;
     _safeNotifyListeners();
   }
+  Future<String?> saveExpense({required NotificationService notificationService}) async {
+    if (selectedDate == null || selectedCategory == null || amountController.text.isEmpty || descriptionController.text.isEmpty) {
+      return "Please complete all the fields";
 
-  Future<String?> saveExpense(
-      {required NotificationService notificationService}) async {
-    if (selectedDate == null ||
-        selectedCategory == null ||
-        amountController.text.isEmpty ||
-        descriptionController.text.isEmpty) {
-      return "Por favor completa todos los campos";
     }
 
     final expense = TrackExpense(
@@ -100,7 +96,7 @@ class TrackExpenseViewModel extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return null;
       } else {
-        return "Error al guardar la transacción: ${response.body}";
+        return "Error saving transaction: ${response.body}";
       }
     } catch (e) {
       return "Error: $e";

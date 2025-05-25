@@ -56,7 +56,7 @@ class _TrackExpenseViewState extends State<_TrackExpenseView> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Transacción guardada exitosamente")),
+        const SnackBar(content: Text("Transaction saved successfully")),
     );
   }
 }

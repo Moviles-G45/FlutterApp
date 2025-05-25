@@ -143,7 +143,7 @@ class _MapScreenState extends State<MapScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "You're offline. Showing last known data.",
+                        "You're offline. Can´t show nearby ATMs",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
